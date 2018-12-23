@@ -190,13 +190,11 @@ public class Server {
         }
     }
     private static class ServerOutputThread extends Thread {
-        private DataOutputStream dataOutputStream;
         private ObjectOutputStream objectOutputStream;
         private boolean sent;
         private boolean isRunning;
         private Table table;
         public ServerOutputThread(Socket client) throws IOException {
-            dataOutputStream = new DataOutputStream(client.getOutputStream());
             objectOutputStream = new ObjectOutputStream(client.getOutputStream());
             isRunning = true;
             sent = true;
