@@ -6,8 +6,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HandTest {
 
+    private Hand test = new Hand();
     @Test
     void calculateHand() {
+        test.setMaxValue(15);
+        test.setMaxValue2(10);
+        Hand test2 = new Hand();
+        test2.setMaxValue(15);
+        test2.setMaxValue2(12);
+        Hand res = test.calculateHand(test2);
+        assertEquals(HandCategory.HIGH_CARD, res.getId());
     }
 
     @Test

@@ -88,9 +88,7 @@ public enum Card {
 		this.suit = suit;
 	}
 
-	public Integer getValue() {
-		return value;
-	}
+	public Integer getValue() { return value; }
 
 	public void setValue(Integer value) {
 		this.value = value;
