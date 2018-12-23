@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxHeight="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #008800;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.suai.poker.graphics.MainController">
+    <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+              <MenuItem fx:id="startMenuItem" mnemonicParsing="false" onAction="#start" text="New" />
+                  <MenuItem fx:id="statisticsMenuItem" mnemonicParsing="false" onAction="#statistics" text="Statistics" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+                  <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" onAction="#help" text="Help" />
+              <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#about" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <BorderPane fx:id="border" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+            <VBox fx:id="vbox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="button1" mnemonicParsing="false" onAction="#onClickButton1" text="Table 1 (0/4)" />
+                  <Button fx:id="button2" mnemonicParsing="false" onAction="#onClickButton2" text="Table 2 (0/4)" />
+                  <Button fx:id="button3" mnemonicParsing="false" onAction="#onClickButton3" text="Table 3 (0/4)" />
+                  <Button fx:id="button4" mnemonicParsing="false" onAction="#onClickButton4" text="Table 4 (0/4)" />
+                  <Button fx:id="button5" mnemonicParsing="false" onAction="#onClickButton5" text="Table 5 (0/4)" />
+               </children>
+            </VBox>
+         </center>
+         <right>
+            <VBox fx:id="regBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <RadioButton fx:id="isRegister" mnemonicParsing="false" text="Register" />
+                  <Label text="Login:" />
+                  <TextField fx:id="regLogin" />
+                  <Label text="Password:" />
+                  <PasswordField fx:id="regPassword" />
+                  <Label text="Check password:" />
+                  <PasswordField fx:id="regCheck" />
+                  <Label text="Name:" />
+                  <TextField fx:id="regName" />
+               </children>
+            </VBox>
+         </right>
+         <bottom>
+            <HBox fx:id="authBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="submitButton" mnemonicParsing="false" onAction="#authentificate" text="Submit" />
+                  <Label fx:id="authLabel" />
+               </children>
+            </HBox>
+         </bottom>
+         <left>
+            <VBox fx:id="logBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <RadioButton fx:id="isLogin" mnemonicParsing="false" text="Login" />
+                  <Label text="Login:" />
+                  <TextField fx:id="logLogin" />
+                  <Label text="Password:" />
+                  <PasswordField fx:id="logPassword" />
+               </children>
+            </VBox>
+         </left></BorderPane>
+   </center>
+   <bottom>
+      <HBox fx:id="hboxBottom" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="800.0" visible="false" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="220.0">
+               <children>
+                  <Button fx:id="actionButton0" disable="true" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#nextTurn" prefHeight="25.0" prefWidth="50.0" text="Next">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="actionButton1" disable="true" mnemonicParsing="false" prefWidth="50.0" text="Fold">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="actionButton2" disable="true" mnemonicParsing="false" prefWidth="50.0" text="Call">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="actionButton3" disable="true" mnemonicParsing="false" prefWidth="50.0" text="Raise">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <Label fx:id="playerStats" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="17.0" textAlignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="220.0">
+               <children>
+                  <Label fx:id="playerBet" alignment="CENTER" contentDisplay="RIGHT" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="70.0" textFill="WHITE" HBox.hgrow="NEVER" />
+                  <Slider fx:id="betSlider" blockIncrement="100.0" disable="true" majorTickUnit="100.0" max="10000.0" maxWidth="1.7976931348623157E308" minorTickCount="100" prefHeight="14.0" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Slider>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="5.0" right="5.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>
