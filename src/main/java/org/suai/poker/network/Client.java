@@ -95,7 +95,7 @@ public class Client {
                             System.out.println("Client got table!");
                             first = false;
                         } else {
-                            synchronized (table) { table = (Table)in.readObject(); }
+                            table = (Table)in.readObject();
                         }
                     }
                 }
