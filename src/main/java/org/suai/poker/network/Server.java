@@ -173,12 +173,13 @@ public class Server {
                 sendTable();
                 boolean first = true;
                 while (!server.isClosed()) {
-                    table = (Table) objectInputStream.readObject();
-                    if (table != null) {
+                    Table testTable = (Table) objectInputStream.readObject();
+                    if ((table != null) && !(table.equals(testTable))) {
                         if (first) {
                             System.out.println("Server got table!");
                             first = false;
                         }
+                        table = testTable;
                         sendTable();
                     }
                 }
