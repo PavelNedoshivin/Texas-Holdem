@@ -118,9 +118,6 @@ public class Client {
         public void sendTable() {
             isSent = false;
         }
-        public void requestTable() {
-
-        }
         @Override
         public void run() {
             try {
