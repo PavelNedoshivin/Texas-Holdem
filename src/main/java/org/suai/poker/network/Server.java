@@ -169,6 +169,8 @@ public class Server {
                     }
                     counter++;
                 }
+                outMessage.close();
+                dataInputStream.close();
                 System.out.println(name + " has chosen Table" + (chosen + 1));
                 sendTable();
                 boolean first = true;

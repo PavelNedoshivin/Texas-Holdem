@@ -103,11 +103,8 @@ public class Client {
                 outMessage.writeUTF(Integer.toString(chosen));
                 choseTable = true;
                 boolean first = true;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                outMessage.close();
+                inMessage.close();
                 table = (Table)in.readObject();
                 while (!client.isClosed()) {
                     if (table != null) {
