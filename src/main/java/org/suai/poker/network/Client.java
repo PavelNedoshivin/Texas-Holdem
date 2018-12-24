@@ -19,17 +19,19 @@ public class Client {
     private static LinkedList tableNumbers;
     private static ClientInputThread cit;
     private static ClientOutputThread cot;
-    private static boolean choseTable;
+    private static ObjectOutputStream out;
+    private static ObjectInputStream in;
 
     public Client() throws IOException {
         client = new Socket("localhost", 8080);
+        in = new ObjectInputStream(client.getInputStream());
+        out = new ObjectOutputStream(client.getOutputStream());
         table = null;
         chosen = -1;
         name = null;
         isSuccess = -1;
         changed = true;
         tableNumbers = new LinkedList();
-        choseTable = false;
     }
     public void setMode(boolean mode) {
         this.mode = mode;
@@ -72,39 +74,34 @@ public class Client {
         @Override
         public void run() {
             try {
-                ObjectInputStream in = new ObjectInputStream(client.getInputStream());
-                DataInputStream inMessage = new DataInputStream(client.getInputStream());
-                DataOutputStream outMessage = new DataOutputStream(client.getOutputStream());
+                in = new ObjectInputStream(client.getInputStream());
                 while (login == null) {
                     ;
                 }
                 while (isSuccess != 0) {
                     if (changed) {
-                        outMessage.writeUTF(Boolean.toString(mode));
-                        outMessage.writeUTF(login);
-                        outMessage.writeUTF(password);
+                        out.writeObject(mode);
+                        out.writeObject(login);
+                        out.writeObject(password);
                         if (mode) {
-                            outMessage.writeUTF(name);
+                            out.writeObject(name);
                         }
                         changed = false;
                     }
-                    isSuccess = Integer.parseInt(inMessage.readUTF());
+                    isSuccess = (int)in.readObject();
                     if (!mode && (isSuccess == 0)) {
-                        name = inMessage.readUTF();
+                        name = (String)in.readObject();
                     }
                     changed = true;
                 }
                 for (int i = 0; i < 5; i++) {
-                    tableNumbers.add(Integer.parseInt(inMessage.readUTF()));
+                    tableNumbers.add(in.readObject());
                 }
                 while (chosen < 0) {
                     ;
                 }
-                outMessage.writeUTF(Integer.toString(chosen));
-                choseTable = true;
+                out.writeObject(chosen);
                 boolean first = true;
-                outMessage.close();
-                inMessage.close();
                 table = (Table)in.readObject();
                 while (!client.isClosed()) {
                     if (table != null) {
@@ -122,11 +119,9 @@ public class Client {
         }
     }
     private static class ClientOutputThread extends Thread {
-        private ObjectOutputStream out;
         private boolean isSent;
         private boolean isRunning;
-        public ClientOutputThread() throws IOException {
-            out = new ObjectOutputStream(client.getOutputStream());
+        public ClientOutputThread() {
             isSent = true;
             isRunning = true;
         }
