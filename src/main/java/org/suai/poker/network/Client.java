@@ -74,7 +74,20 @@ public class Client {
             try {
                 ObjectInputStream in = new ObjectInputStream(client.getInputStream());
                 DataInputStream inMessage = new DataInputStream(client.getInputStream());
+                DataOutputStream outMessage = new DataOutputStream(client.getOutputStream());
+                while (login == null) {
+                    ;
+                }
                 while (isSuccess != 0) {
+                    if (changed) {
+                        outMessage.writeUTF(Boolean.toString(mode));
+                        outMessage.writeUTF(login);
+                        outMessage.writeUTF(password);
+                        if (mode) {
+                            outMessage.writeUTF(name);
+                        }
+                        changed = false;
+                    }
                     isSuccess = Integer.parseInt(inMessage.readUTF());
                     if (!mode && (isSuccess == 0)) {
                         name = inMessage.readUTF();
@@ -84,9 +97,16 @@ public class Client {
                 for (int i = 0; i < 5; i++) {
                     tableNumbers.add(Integer.parseInt(inMessage.readUTF()));
                 }
-                boolean first = true;
-                while (!choseTable) {
+                while (chosen < 0) {
                     ;
+                }
+                outMessage.writeUTF(Integer.toString(chosen));
+                choseTable = true;
+                boolean first = true;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 table = (Table)in.readObject();
                 while (!client.isClosed()) {
@@ -106,12 +126,10 @@ public class Client {
     }
     private static class ClientOutputThread extends Thread {
         private ObjectOutputStream out;
-        private DataOutputStream outMessage;
         private boolean isSent;
         private boolean isRunning;
         public ClientOutputThread() throws IOException {
             out = new ObjectOutputStream(client.getOutputStream());
-            outMessage = new DataOutputStream(client.getOutputStream());
             isSent = true;
             isRunning = true;
         }
@@ -121,25 +139,6 @@ public class Client {
         @Override
         public void run() {
             try {
-                while (login == null) {
-                    ;
-                }
-                while (isSuccess != 0) {
-                    if (changed) {
-                        outMessage.writeUTF(Boolean.toString(mode));
-                        outMessage.writeUTF(login);
-                        outMessage.writeUTF(password);
-                        if (mode) {
-                            outMessage.writeUTF(name);
-                        }
-                        changed = false;
-                    }
-                }
-                while (chosen < 0) {
-                    ;
-                }
-                outMessage.writeUTF(Integer.toString(chosen));
-                choseTable = true;
                 while (isRunning) {
                     if (table != null) {
                         synchronized (table) {
