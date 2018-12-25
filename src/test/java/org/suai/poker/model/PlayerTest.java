@@ -2,6 +2,9 @@ package org.suai.poker.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -49,25 +52,49 @@ class PlayerTest {
 
     @Test
     void allIn() {
+        test.allIn();
+        assertEquals(test.getBalance(), test.getCurrentBet());
     }
 
     @Test
     void pay() {
+        test.allIn();
+        test.pay();
+        assertEquals(new Integer(0), test.getBalance());
     }
 
     @Test
     void calculateBestHand() {
+        Hand res = new Hand();
+        List<Card> list = new ArrayList<>();
+        list.add(Card.C6);
+        list.add(Card.S10);
+        list.add(Card.D6);
+        list.add(Card.SJ);
+        list.add(Card.SQ);
+        list.add(Card.SK);
+        list.add(Card.SA);
+        res.setHand(list);
+        res = res.getStraightFlush();
+        test.calculateBestHand(res);
+        assertEquals(new Integer(14), test.getBestHand().getMaxValue());
     }
 
     @Test
     void isNotPlaying() {
+        test.fold();
+        assertEquals(true, test.isNotPlaying());
     }
 
     @Test
     void isTurnAllowed() {
+        test.fold();
+        assertEquals(false, test.isTurnAllowed());
     }
 
     @Test
     void isAllIn() {
+        test.allIn();
+        assertEquals(true, test.isAllIn());
     }
 }

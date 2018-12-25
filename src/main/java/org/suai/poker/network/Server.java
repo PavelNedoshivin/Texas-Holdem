@@ -31,6 +31,7 @@ public class Server {
     private static class ServerInputThread extends Thread {
         private Socket client;
         private String name;
+        private DataInputStream dataInputStream;
         private ObjectInputStream objectInputStream;
         private DataOutputStream dataOutputStream;
         private ServerOutputThread out;
@@ -42,6 +43,7 @@ public class Server {
                 name = "Client" + rand.nextInt(100500);
             }
             this.client = client;
+            dataInputStream = new DataInputStream(client.getInputStream());
             objectInputStream = new ObjectInputStream(client.getInputStream());
             dataOutputStream = new DataOutputStream(client.getOutputStream());
             out = new ServerOutputThread(client);
@@ -60,16 +62,16 @@ public class Server {
                 user.setTable(table);
             }
         }
-        public void authentificate() throws IOException, ClassNotFoundException {
+        public void authentificate() throws IOException {
             boolean success = false;
             while (!success) {
                 BufferedReader reader = new BufferedReader(new FileReader("D:\\base.txt"));
-                boolean mode = (boolean)objectInputStream.readObject();
-                String login = (String)objectInputStream.readObject();
-                String password = (String)objectInputStream.readObject();
+                boolean mode = Boolean.parseBoolean(dataInputStream.readUTF());
+                String login = dataInputStream.readUTF();
+                String password = dataInputStream.readUTF();
                 String name = null;
                 if (mode) {
-                    name = (String)objectInputStream.readObject();
+                    name = dataInputStream.readUTF();
                     String line;
                     success = true;
                     while ((line = reader.readLine()) != null) {
@@ -154,7 +156,7 @@ public class Server {
                     LinkedList list = (LinkedList)pair.getValue();
                     outMessage.writeUTF(Integer.toString(list.size()));
                 }
-                int chosen = (int)objectInputStream.readObject();
+                int chosen = Integer.parseInt(dataInputStream.readUTF());
                 int counter = 0;
                 for (Object o: tableList.entrySet()) {
                     Map.Entry pair = (Map.Entry)o;
@@ -167,7 +169,6 @@ public class Server {
                     }
                     counter++;
                 }
-                outMessage.close();
                 System.out.println(name + " has chosen Table" + (chosen + 1));
                 sendTable();
                 boolean first = true;

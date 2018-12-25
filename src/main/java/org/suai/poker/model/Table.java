@@ -283,9 +283,7 @@ public class Table implements Serializable {
 	 *
 	 * @return A card from specific table hand.
 	 */
-	public Card getTableHandCard(Integer cardPos) {
-		return tableHand.getHand().get(cardPos);
-	}
+	public Card getTableHandCard(Integer cardPos) { return tableHand.getHand().get(cardPos); }
 
 	// End of table hand methods
 

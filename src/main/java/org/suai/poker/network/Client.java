@@ -1,10 +1,12 @@
 package org.suai.poker.network;
 
-import org.suai.poker.model.Table;
+import org.suai.poker.model.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Client {
     private static Socket client;
@@ -19,19 +21,17 @@ public class Client {
     private static LinkedList tableNumbers;
     private static ClientInputThread cit;
     private static ClientOutputThread cot;
-    private static ObjectOutputStream out;
-    private static ObjectInputStream in;
+    private static boolean choseTable;
 
     public Client() throws IOException {
         client = new Socket("localhost", 8080);
-        in = new ObjectInputStream(client.getInputStream());
-        out = new ObjectOutputStream(client.getOutputStream());
         table = null;
         chosen = -1;
         name = null;
         isSuccess = -1;
         changed = true;
         tableNumbers = new LinkedList();
+        choseTable = false;
     }
     public void setMode(boolean mode) {
         this.mode = mode;
@@ -71,57 +71,159 @@ public class Client {
         return tableNumbers;
     }
     private static class ClientInputThread extends Thread {
+        private static DataInputStream inMessage;
+
+        static {
+            try {
+                inMessage = new DataInputStream(client.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private static DataOutputStream outMessage;
+
+        static {
+            try {
+                outMessage = new DataOutputStream(client.getOutputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private Hand buildHand() throws IOException {
+            Hand hand = new Hand();
+            int handSize = Integer.parseInt(inMessage.readUTF());
+            List<Card> cardList = new ArrayList<>(handSize);
+            for (int j = 0; j < handSize; j++) {
+                cardList.add(Card.valueOf(inMessage.readUTF()));
+            }
+            hand.setHand(cardList);
+            hand.setMaxValue(Integer.parseInt(inMessage.readUTF()));
+            hand.setMaxValue2(Integer.parseInt(inMessage.readUTF()));
+            hand.setId(HandCategory.valueOf(inMessage.readUTF()));
+            return hand;
+        }
+
+        private List<Player> buildPlayerList(Table testTable) throws IOException {
+            int size = Integer.parseInt(inMessage.readUTF());
+            List<Player> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                Player player = new Player(inMessage.readUTF(), Integer.parseInt(inMessage.readUTF()),
+                        testTable, false);
+                player.setStatus(PlayerStatus.valueOf(inMessage.readUTF()));
+                player.setDealer(Boolean.parseBoolean(inMessage.readUTF()));
+                player.setCurrentBet(Integer.parseInt(inMessage.readUTF()));
+                Hand hand = buildHand();
+                player.setHand(hand);
+                hand = buildHand();
+                player.setBestHand(hand);
+                hand = buildHand();
+                player.setKicker(hand);
+                list.add(player);
+            }
+            return list;
+        }
+
+        public void buildTable() throws IOException {
+            Table testTable = new Table();
+            testTable.setPlayerList(buildPlayerList(testTable));
+            testTable.setTableHand(buildHand());
+
+            List<Pot> potList = new ArrayList<>();
+            int size = Integer.parseInt(inMessage.readUTF());
+            for (int i = 0; i < size; i++) {
+                Pot pot = new Pot();
+                pot.setAmount(Integer.parseInt(inMessage.readUTF()));
+                pot.setPlayerList(buildPlayerList(testTable));
+                pot.setWinnerList(buildPlayerList(testTable));
+            }
+            testTable.setPot(potList);
+
+            testTable.setCurrentBet(Integer.parseInt(inMessage.readUTF()));
+            testTable.setSmallBlind(Integer.parseInt(inMessage.readUTF()));
+
+            Deck deck = new Deck();
+            size = Integer.parseInt(inMessage.readUTF());
+            List<Card> cardList = new ArrayList<>(size);
+            for (int j = 0; j < size; j++) {
+                cardList.add(Card.valueOf(inMessage.readUTF()));
+            }
+            deck.setDeck(cardList);
+            testTable.setTableDeck(deck);
+
+            Player player = new Player(inMessage.readUTF(), Integer.parseInt(inMessage.readUTF()),
+                    testTable, false);
+            player.setStatus(PlayerStatus.valueOf(inMessage.readUTF()));
+            player.setDealer(Boolean.parseBoolean(inMessage.readUTF()));
+            player.setCurrentBet(Integer.parseInt(inMessage.readUTF()));
+            player.setHand(buildHand());
+            player.setBestHand(buildHand());
+            player.setKicker(buildHand());
+            testTable.setWinner(player);
+
+            testTable.setDealerPos(Integer.parseInt(inMessage.readUTF()));
+            testTable.setTurnPos(Integer.parseInt(inMessage.readUTF()));
+            testTable.setBlindSmallPos(Integer.parseInt(inMessage.readUTF()));
+            testTable.setBlindBigPos(Integer.parseInt(inMessage.readUTF()));
+            testTable.setCurrentTurn(Integer.parseInt(inMessage.readUTF()));
+            if (!(table.equals(testTable))) {
+                table = testTable;
+            }
+        }
         @Override
         public void run() {
             try {
-                in = new ObjectInputStream(client.getInputStream());
                 while (login == null) {
                     ;
                 }
                 while (isSuccess != 0) {
                     if (changed) {
-                        out.writeObject(mode);
-                        out.writeObject(login);
-                        out.writeObject(password);
+                        outMessage.writeUTF(Boolean.toString(mode));
+                        outMessage.writeUTF(login);
+                        outMessage.writeUTF(password);
                         if (mode) {
-                            out.writeObject(name);
+                            outMessage.writeUTF(name);
                         }
                         changed = false;
                     }
-                    isSuccess = (int)in.readObject();
+                    isSuccess = Integer.parseInt(inMessage.readUTF());
                     if (!mode && (isSuccess == 0)) {
-                        name = (String)in.readObject();
+                        name = inMessage.readUTF();
                     }
                     changed = true;
                 }
                 for (int i = 0; i < 5; i++) {
-                    tableNumbers.add(in.readObject());
+                    tableNumbers.add(Integer.parseInt(inMessage.readUTF()));
                 }
                 while (chosen < 0) {
                     ;
                 }
-                out.writeObject(chosen);
+                outMessage.writeUTF(Integer.toString(chosen));
+                choseTable = true;
                 boolean first = true;
-                table = (Table)in.readObject();
+                buildTable();
                 while (!client.isClosed()) {
                     if (table != null) {
                         if (first) {
                             System.out.println("Client got table!");
                             first = false;
                         } else {
-                            table = (Table)in.readObject();
+                            buildTable();
                         }
                     }
                 }
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
     private static class ClientOutputThread extends Thread {
+        private ObjectOutputStream out;
         private boolean isSent;
         private boolean isRunning;
-        public ClientOutputThread() {
+        public ClientOutputThread() throws IOException {
+            out = new ObjectOutputStream(client.getOutputStream());
             isSent = true;
             isRunning = true;
         }

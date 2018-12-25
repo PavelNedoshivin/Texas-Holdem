@@ -195,9 +195,7 @@ public class Player implements Serializable {
 
 	}
 
-	public Boolean isNotPlaying() {
-			return isFold() || isBustedOut();
-	}
+	public Boolean isNotPlaying() { return isFold() || isBustedOut(); }
 	
 	public Boolean isTurnAllowed() {
 		return !(isFold() || isBustedOut() || isAllIn());
