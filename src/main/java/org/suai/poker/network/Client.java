@@ -167,10 +167,11 @@ public class Client {
             testTable.setBlindSmallPos(Integer.parseInt(inMessage.readUTF()));
             testTable.setBlindBigPos(Integer.parseInt(inMessage.readUTF()));
             testTable.setCurrentTurn(Integer.parseInt(inMessage.readUTF()));
-            if (!(table.equals(testTable))) {
+            if (!(testTable.equals(table))) {
                 table = testTable;
             }
         }
+
         @Override
         public void run() {
             try {
@@ -219,17 +220,79 @@ public class Client {
         }
     }
     private static class ClientOutputThread extends Thread {
-        private ObjectOutputStream out;
+        private DataOutputStream out;
         private boolean isSent;
         private boolean isRunning;
         public ClientOutputThread() throws IOException {
-            out = new ObjectOutputStream(client.getOutputStream());
+            out = new DataOutputStream(client.getOutputStream());
             isSent = true;
             isRunning = true;
         }
         public void sendTable() {
             isSent = false;
         }
+
+        private void sendPlayerList(List<Player> list) throws IOException {
+            out.writeUTF(Integer.toString(list.size()));
+            for (int i = 0; i < list.size(); i++) {
+                Player player = list.get(i);
+                out.writeUTF(player.getName());
+                out.writeUTF(Integer.toString(player.getBalance()));
+                out.writeUTF(player.getStatus().getName());
+                out.writeUTF(Boolean.toString(player.getDealer()));
+                out.writeUTF(Integer.toString(player.getCurrentBet()));
+                sendHand(player.getHand());
+                sendHand(player.getBestHand());
+                sendHand(player.getKicker());
+            }
+        }
+
+        private void sendHand(Hand hand) throws IOException {
+            out.writeUTF(Integer.toString(hand.getHand().size()));
+            for (int i = 0; i < hand.getHand().size(); i++) {
+                out.writeUTF(hand.getHand().get(i).getName());
+            }
+            out.writeUTF(Integer.toString(hand.getMaxValue()));
+            out.writeUTF(Integer.toString(hand.getMaxValue2()));
+            out.writeUTF(hand.getId().getName());
+        }
+
+        public void send() throws IOException {
+            sendPlayerList(table.getPlayerList());
+            sendHand(table.getTableHand());
+            out.writeUTF(Integer.toString(table.getPot().size()));
+            for (int i = 0; i < table.getPot().size(); i++) {
+                Pot pot = table.getPot().get(i);
+                out.writeUTF(Integer.toString(pot.getAmount()));
+                sendPlayerList(pot.getPlayerList());
+                sendPlayerList(pot.getWinnerList());
+            }
+
+            out.writeUTF(Integer.toString(table.getCurrentBet()));
+            out.writeUTF(Integer.toString(table.getSmallBlind()));
+
+            Deck deck = table.getTableDeck();
+            out.writeUTF(Integer.toString(deck.getDeck().size()));
+            for (int i = 0; i < deck.getDeck().size(); i++) {
+                out.writeUTF(deck.getDeck().get(i).getName());
+            }
+
+            out.writeUTF(table.getWinner().getName());
+            out.writeUTF(Integer.toString(table.getWinner().getBalance()));
+            out.writeUTF(table.getWinner().getStatus().getName());
+            out.writeUTF(Boolean.toString(table.getWinner().getDealer()));
+            out.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
+            sendHand(table.getWinner().getHand());
+            sendHand(table.getWinner().getBestHand());
+            sendHand(table.getWinner().getKicker());
+
+            out.writeUTF(Integer.toString(table.getDealerPos()));
+            out.writeUTF(Integer.toString(table.getTurnPos()));
+            out.writeUTF(Integer.toString(table.getBlindSmallPos()));
+            out.writeUTF(Integer.toString(table.getBlindBigPos()));
+            out.writeUTF(Integer.toString(table.getCurrentTurn()));
+        }
+
         @Override
         public void run() {
             try {
@@ -237,7 +300,7 @@ public class Client {
                     if (table != null) {
                         synchronized (table) {
                             if (!isSent) {
-                                out.writeObject(table);
+                                send();
                                 isSent = true;
                             }
                         }
