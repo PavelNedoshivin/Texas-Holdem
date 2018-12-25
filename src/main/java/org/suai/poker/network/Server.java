@@ -32,6 +32,8 @@ public class Server {
         private DataOutputStream dataOutputStream;
         private ServerOutputThread out;
         private Table table;
+        private int chosen;
+
         public ServerInputThread(Socket client) throws IOException {
             Random rand = new Random();
             name = "Client" + rand.nextInt(100500);
@@ -44,6 +46,7 @@ public class Server {
             out = new ServerOutputThread(client);
             userList.put(name, out);
             table = null;
+            chosen = -1;
             start();
         }
         synchronized void sendTable() {
@@ -233,7 +236,7 @@ public class Server {
                     LinkedList list = (LinkedList)pair.getValue();
                     outMessage.writeUTF(Integer.toString(list.size()));
                 }
-                int chosen = Integer.parseInt(dataInputStream.readUTF());
+                chosen = Integer.parseInt(dataInputStream.readUTF());
                 int counter = 0;
                 for (Object o: tableList.entrySet()) {
                     Map.Entry pair = (Map.Entry)o;
@@ -259,6 +262,17 @@ public class Server {
                 }
             } catch (IOException e) {
                 System.out.println("Communication with " + name + " terminated!");
+                int counter = 0;
+                for (Object o: tableList.entrySet()) {
+                    Map.Entry pair = (Map.Entry)o;
+                    if (counter == chosen) {
+                        LinkedList list = (LinkedList)pair.getValue();
+                        list.remove(name);
+                        break;
+                    }
+                    counter++;
+                }
+                userList.remove(name);
             }
         }
     }
