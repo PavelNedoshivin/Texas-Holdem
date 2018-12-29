@@ -298,7 +298,7 @@ public class Server {
                 Player player = list.get(i);
                 dataOutputStream.writeUTF(player.getName());
                 dataOutputStream.writeUTF(Integer.toString(player.getBalance()));
-                dataOutputStream.writeUTF(player.getStatus().getName());
+                dataOutputStream.writeUTF(player.getStatus().toString());
                 dataOutputStream.writeUTF(Boolean.toString(player.getDealer()));
                 dataOutputStream.writeUTF(Integer.toString(player.getCurrentBet()));
                 sendHand(player.getHand());
@@ -314,7 +314,7 @@ public class Server {
             }
             dataOutputStream.writeUTF(Integer.toString(hand.getMaxValue()));
             dataOutputStream.writeUTF(Integer.toString(hand.getMaxValue2()));
-            dataOutputStream.writeUTF(hand.getId().getName());
+            dataOutputStream.writeUTF(hand.getId().toString());
         }
 
         public void send() throws IOException {
@@ -339,7 +339,7 @@ public class Server {
 
             dataOutputStream.writeUTF(table.getWinner().getName());
             dataOutputStream.writeUTF(Integer.toString(table.getWinner().getBalance()));
-            dataOutputStream.writeUTF(table.getWinner().getStatus().getName());
+            dataOutputStream.writeUTF(table.getWinner().getStatus().toString());
             dataOutputStream.writeUTF(Boolean.toString(table.getWinner().getDealer()));
             dataOutputStream.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
             sendHand(table.getWinner().getHand());

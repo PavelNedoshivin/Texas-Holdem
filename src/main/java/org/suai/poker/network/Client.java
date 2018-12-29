@@ -238,7 +238,7 @@ public class Client {
                 Player player = list.get(i);
                 out.writeUTF(player.getName());
                 out.writeUTF(Integer.toString(player.getBalance()));
-                out.writeUTF(player.getStatus().getName());
+                out.writeUTF(player.getStatus().toString());
                 out.writeUTF(Boolean.toString(player.getDealer()));
                 out.writeUTF(Integer.toString(player.getCurrentBet()));
                 sendHand(player.getHand());
@@ -254,7 +254,7 @@ public class Client {
             }
             out.writeUTF(Integer.toString(hand.getMaxValue()));
             out.writeUTF(Integer.toString(hand.getMaxValue2()));
-            out.writeUTF(hand.getId().getName());
+            out.writeUTF(hand.getId().toString());
         }
 
         public void send() throws IOException {
@@ -279,7 +279,7 @@ public class Client {
 
             out.writeUTF(table.getWinner().getName());
             out.writeUTF(Integer.toString(table.getWinner().getBalance()));
-            out.writeUTF(table.getWinner().getStatus().getName());
+            out.writeUTF(table.getWinner().getStatus().toString());
             out.writeUTF(Boolean.toString(table.getWinner().getDealer()));
             out.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
             sendHand(table.getWinner().getHand());

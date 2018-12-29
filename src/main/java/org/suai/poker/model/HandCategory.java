@@ -16,7 +16,7 @@ public enum HandCategory {
 	private Integer id;
 	private String name;
 	
-	private HandCategory(Integer id, String name) {
+	HandCategory(Integer id, String name) {
 		this.id = id;
 		this.name = name;
 	}
