@@ -154,7 +154,42 @@ public class Server {
             hand.setHand(cardList);
             hand.setMaxValue(Integer.parseInt(dataInputStream.readUTF()));
             hand.setMaxValue2(Integer.parseInt(dataInputStream.readUTF()));
-            hand.setId(HandCategory.valueOf(dataInputStream.readUTF()));
+            int id = Integer.parseInt(dataInputStream.readUTF());
+            switch (id) {
+                case 0:
+                    hand.setId(HandCategory.UNKNOWN);
+                    break;
+                case 1:
+                    hand.setId(HandCategory.HIGH_CARD);
+                    break;
+                case 2:
+                    hand.setId(HandCategory.PAIR);
+                    break;
+                case 3:
+                    hand.setId(HandCategory.TWO_PAIR);
+                    break;
+                case 4:
+                    hand.setId(HandCategory.THREE_OF_A_KIND);
+                    break;
+                case 5:
+                    hand.setId(HandCategory.STRAIGHT);
+                    break;
+                case 6:
+                    hand.setId(HandCategory.FLUSH);
+                    break;
+                case 7:
+                    hand.setId(HandCategory.FULL_HOUSE);
+                    break;
+                case 8:
+                    hand.setId(HandCategory.FOUR_OF_A_KIND);
+                    break;
+                case 9:
+                    hand.setId(HandCategory.STRAIGHT_FLUSH);
+                    break;
+                case 10:
+                    hand.setId(HandCategory.ROYAL_FLUSH);
+                    break;
+            }
             return hand;
         }
 
@@ -164,7 +199,39 @@ public class Server {
             for (int i = 0; i < size; i++) {
                 Player player = new Player(dataInputStream.readUTF(), Integer.parseInt(dataInputStream.readUTF()),
                         testTable, false);
-                player.setStatus(PlayerStatus.valueOf(dataInputStream.readUTF()));
+                int id = Integer.parseInt(dataInputStream.readUTF());
+                switch (id) {
+                    case 0:
+                        player.setStatus(PlayerStatus.PLAYER_NORMAL);
+                        break;
+                    case 1:
+                        player.setStatus(PlayerStatus.PLAYER_CHECK);
+                        break;
+                    case 2:
+                        player.setStatus(PlayerStatus.PLAYER_CALL);
+                        break;
+                    case 3:
+                        player.setStatus(PlayerStatus.PLAYER_BET);
+                        break;
+                    case 4:
+                        player.setStatus(PlayerStatus.PLAYER_RAISE);
+                        break;
+                    case 5:
+                        player.setStatus(PlayerStatus.PLAYER_FOLD);
+                        break;
+                    case 6:
+                        player.setStatus(PlayerStatus.PLAYER_ALLIN);
+                        break;
+                    case 7:
+                        player.setStatus(PlayerStatus.PLAYER_WINNER);
+                        break;
+                    case 8:
+                        player.setStatus(PlayerStatus.PLAYER_LOST);
+                        break;
+                    case 9:
+                        player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
+                        break;
+                }
                 player.setDealer(Boolean.parseBoolean(dataInputStream.readUTF()));
                 player.setCurrentBet(Integer.parseInt(dataInputStream.readUTF()));
                 Hand hand = buildHand();
@@ -207,7 +274,39 @@ public class Server {
 
             Player player = new Player(dataInputStream.readUTF(), Integer.parseInt(dataInputStream.readUTF()),
                     testTable, false);
-            player.setStatus(PlayerStatus.valueOf(dataInputStream.readUTF()));
+            int id = Integer.parseInt(dataInputStream.readUTF());
+            switch (id) {
+                case 0:
+                    player.setStatus(PlayerStatus.PLAYER_NORMAL);
+                    break;
+                case 1:
+                    player.setStatus(PlayerStatus.PLAYER_CHECK);
+                    break;
+                case 2:
+                    player.setStatus(PlayerStatus.PLAYER_CALL);
+                    break;
+                case 3:
+                    player.setStatus(PlayerStatus.PLAYER_BET);
+                    break;
+                case 4:
+                    player.setStatus(PlayerStatus.PLAYER_RAISE);
+                    break;
+                case 5:
+                    player.setStatus(PlayerStatus.PLAYER_FOLD);
+                    break;
+                case 6:
+                    player.setStatus(PlayerStatus.PLAYER_ALLIN);
+                    break;
+                case 7:
+                    player.setStatus(PlayerStatus.PLAYER_WINNER);
+                    break;
+                case 8:
+                    player.setStatus(PlayerStatus.PLAYER_LOST);
+                    break;
+                case 9:
+                    player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
+                    break;
+            }
             player.setDealer(Boolean.parseBoolean(dataInputStream.readUTF()));
             player.setCurrentBet(Integer.parseInt(dataInputStream.readUTF()));
             player.setHand(buildHand());
@@ -298,7 +397,7 @@ public class Server {
                 Player player = list.get(i);
                 dataOutputStream.writeUTF(player.getName());
                 dataOutputStream.writeUTF(Integer.toString(player.getBalance()));
-                dataOutputStream.writeUTF(player.getStatus().toString());
+                dataOutputStream.writeUTF(Integer.toString(player.getStatus().getId()));
                 dataOutputStream.writeUTF(Boolean.toString(player.getDealer()));
                 dataOutputStream.writeUTF(Integer.toString(player.getCurrentBet()));
                 sendHand(player.getHand());
@@ -314,7 +413,7 @@ public class Server {
             }
             dataOutputStream.writeUTF(Integer.toString(hand.getMaxValue()));
             dataOutputStream.writeUTF(Integer.toString(hand.getMaxValue2()));
-            dataOutputStream.writeUTF(hand.getId().toString());
+            dataOutputStream.writeUTF(Integer.toString(hand.getId().getId()));
         }
 
         public void send() throws IOException {
@@ -339,7 +438,7 @@ public class Server {
 
             dataOutputStream.writeUTF(table.getWinner().getName());
             dataOutputStream.writeUTF(Integer.toString(table.getWinner().getBalance()));
-            dataOutputStream.writeUTF(table.getWinner().getStatus().toString());
+            dataOutputStream.writeUTF(Integer.toString(table.getWinner().getStatus().getId()));
             dataOutputStream.writeUTF(Boolean.toString(table.getWinner().getDealer()));
             dataOutputStream.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
             sendHand(table.getWinner().getHand());

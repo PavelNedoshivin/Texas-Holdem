@@ -101,7 +101,42 @@ public class Client {
             hand.setHand(cardList);
             hand.setMaxValue(Integer.parseInt(inMessage.readUTF()));
             hand.setMaxValue2(Integer.parseInt(inMessage.readUTF()));
-            hand.setId(HandCategory.valueOf(inMessage.readUTF()));
+            int id = Integer.parseInt(inMessage.readUTF());
+            switch (id) {
+                case 0:
+                    hand.setId(HandCategory.UNKNOWN);
+                    break;
+                case 1:
+                    hand.setId(HandCategory.HIGH_CARD);
+                    break;
+                case 2:
+                    hand.setId(HandCategory.PAIR);
+                    break;
+                case 3:
+                    hand.setId(HandCategory.TWO_PAIR);
+                    break;
+                case 4:
+                    hand.setId(HandCategory.THREE_OF_A_KIND);
+                    break;
+                case 5:
+                    hand.setId(HandCategory.STRAIGHT);
+                    break;
+                case 6:
+                    hand.setId(HandCategory.FLUSH);
+                    break;
+                case 7:
+                    hand.setId(HandCategory.FULL_HOUSE);
+                    break;
+                case 8:
+                    hand.setId(HandCategory.FOUR_OF_A_KIND);
+                    break;
+                case 9:
+                    hand.setId(HandCategory.STRAIGHT_FLUSH);
+                    break;
+                case 10:
+                    hand.setId(HandCategory.ROYAL_FLUSH);
+                    break;
+            }
             return hand;
         }
 
@@ -111,7 +146,39 @@ public class Client {
             for (int i = 0; i < size; i++) {
                 Player player = new Player(inMessage.readUTF(), Integer.parseInt(inMessage.readUTF()),
                         testTable, false);
-                player.setStatus(PlayerStatus.valueOf(inMessage.readUTF()));
+                int id = Integer.parseInt(inMessage.readUTF());
+                switch (id) {
+                    case 0:
+                        player.setStatus(PlayerStatus.PLAYER_NORMAL);
+                        break;
+                    case 1:
+                        player.setStatus(PlayerStatus.PLAYER_CHECK);
+                        break;
+                    case 2:
+                        player.setStatus(PlayerStatus.PLAYER_CALL);
+                        break;
+                    case 3:
+                        player.setStatus(PlayerStatus.PLAYER_BET);
+                        break;
+                    case 4:
+                        player.setStatus(PlayerStatus.PLAYER_RAISE);
+                        break;
+                    case 5:
+                        player.setStatus(PlayerStatus.PLAYER_FOLD);
+                        break;
+                    case 6:
+                        player.setStatus(PlayerStatus.PLAYER_ALLIN);
+                        break;
+                    case 7:
+                        player.setStatus(PlayerStatus.PLAYER_WINNER);
+                        break;
+                    case 8:
+                        player.setStatus(PlayerStatus.PLAYER_LOST);
+                        break;
+                    case 9:
+                        player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
+                        break;
+                }
                 player.setDealer(Boolean.parseBoolean(inMessage.readUTF()));
                 player.setCurrentBet(Integer.parseInt(inMessage.readUTF()));
                 Hand hand = buildHand();
@@ -154,7 +221,39 @@ public class Client {
 
             Player player = new Player(inMessage.readUTF(), Integer.parseInt(inMessage.readUTF()),
                     testTable, false);
-            player.setStatus(PlayerStatus.valueOf(inMessage.readUTF()));
+            int id = Integer.parseInt(inMessage.readUTF());
+            switch (id) {
+                case 0:
+                    player.setStatus(PlayerStatus.PLAYER_NORMAL);
+                    break;
+                case 1:
+                    player.setStatus(PlayerStatus.PLAYER_CHECK);
+                    break;
+                case 2:
+                    player.setStatus(PlayerStatus.PLAYER_CALL);
+                    break;
+                case 3:
+                    player.setStatus(PlayerStatus.PLAYER_BET);
+                    break;
+                case 4:
+                    player.setStatus(PlayerStatus.PLAYER_RAISE);
+                    break;
+                case 5:
+                    player.setStatus(PlayerStatus.PLAYER_FOLD);
+                    break;
+                case 6:
+                    player.setStatus(PlayerStatus.PLAYER_ALLIN);
+                    break;
+                case 7:
+                    player.setStatus(PlayerStatus.PLAYER_WINNER);
+                    break;
+                case 8:
+                    player.setStatus(PlayerStatus.PLAYER_LOST);
+                    break;
+                case 9:
+                    player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
+                    break;
+            }
             player.setDealer(Boolean.parseBoolean(inMessage.readUTF()));
             player.setCurrentBet(Integer.parseInt(inMessage.readUTF()));
             player.setHand(buildHand());
@@ -238,7 +337,7 @@ public class Client {
                 Player player = list.get(i);
                 out.writeUTF(player.getName());
                 out.writeUTF(Integer.toString(player.getBalance()));
-                out.writeUTF(player.getStatus().toString());
+                out.writeUTF(Integer.toString(player.getStatus().getId()));
                 out.writeUTF(Boolean.toString(player.getDealer()));
                 out.writeUTF(Integer.toString(player.getCurrentBet()));
                 sendHand(player.getHand());
@@ -254,7 +353,7 @@ public class Client {
             }
             out.writeUTF(Integer.toString(hand.getMaxValue()));
             out.writeUTF(Integer.toString(hand.getMaxValue2()));
-            out.writeUTF(hand.getId().toString());
+            out.writeUTF(Integer.toString(hand.getId().getId()));
         }
 
         public void send() throws IOException {
@@ -279,7 +378,7 @@ public class Client {
 
             out.writeUTF(table.getWinner().getName());
             out.writeUTF(Integer.toString(table.getWinner().getBalance()));
-            out.writeUTF(table.getWinner().getStatus().toString());
+            out.writeUTF(Integer.toString(table.getWinner().getStatus().getId()));
             out.writeUTF(Boolean.toString(table.getWinner().getDealer()));
             out.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
             sendHand(table.getWinner().getHand());
