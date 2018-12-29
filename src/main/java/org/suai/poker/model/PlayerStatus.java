@@ -20,9 +20,7 @@ public enum PlayerStatus {
 		this.name = name;
 	}
 
-	public String toString() {
-		return name;
-	}
+	public String toString() { return name; }
 	
 	public Integer getId() {
 		return id;
