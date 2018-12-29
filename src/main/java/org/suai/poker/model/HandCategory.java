@@ -40,4 +40,5 @@ public enum HandCategory {
 	public String toString() {
 		return name;
 	}
+
 }
