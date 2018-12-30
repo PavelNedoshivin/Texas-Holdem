@@ -96,7 +96,168 @@ public class Client {
             int handSize = Integer.parseInt(inMessage.readUTF());
             List<Card> cardList = new ArrayList<>(handSize);
             for (int j = 0; j < handSize; j++) {
-                cardList.add(Card.valueOf(inMessage.readUTF()));
+                int id = Integer.parseInt(inMessage.readUTF());
+                switch (id) {
+                    case -1:
+                        cardList.add(Card.E0);
+                        break;
+                    case 0:
+                        cardList.add(Card.C2);
+                        break;
+                    case 1:
+                        cardList.add(Card.C3);
+                        break;
+                    case 2:
+                        cardList.add(Card.C4);
+                        break;
+                    case 3:
+                        cardList.add(Card.C5);
+                        break;
+                    case 4:
+                        cardList.add(Card.C6);
+                        break;
+                    case 5:
+                        cardList.add(Card.C7);
+                        break;
+                    case 6:
+                        cardList.add(Card.C8);
+                        break;
+                    case 7:
+                        cardList.add(Card.C9);
+                        break;
+                    case 8:
+                        cardList.add(Card.C10);
+                        break;
+                    case 9:
+                        cardList.add(Card.CJ);
+                        break;
+                    case 10:
+                        cardList.add(Card.CQ);
+                        break;
+                    case 11:
+                        cardList.add(Card.CK);
+                        break;
+                    case 12:
+                        cardList.add(Card.CA);
+                        break;
+                    case 13:
+                        cardList.add(Card.D2);
+                        break;
+                    case 14:
+                        cardList.add(Card.D3);
+                        break;
+                    case 15:
+                        cardList.add(Card.D4);
+                        break;
+                    case 16:
+                        cardList.add(Card.D5);
+                        break;
+                    case 17:
+                        cardList.add(Card.D6);
+                        break;
+                    case 18:
+                        cardList.add(Card.D7);
+                        break;
+                    case 19:
+                        cardList.add(Card.D8);
+                        break;
+                    case 20:
+                        cardList.add(Card.D9);
+                        break;
+                    case 21:
+                        cardList.add(Card.D10);
+                        break;
+                    case 22:
+                        cardList.add(Card.DJ);
+                        break;
+                    case 23:
+                        cardList.add(Card.DQ);
+                        break;
+                    case 24:
+                        cardList.add(Card.DK);
+                        break;
+                    case 25:
+                        cardList.add(Card.DA);
+                        break;
+                    case 26:
+                        cardList.add(Card.S2);
+                        break;
+                    case 27:
+                        cardList.add(Card.S3);
+                        break;
+                    case 28:
+                        cardList.add(Card.S4);
+                        break;
+                    case 29:
+                        cardList.add(Card.S5);
+                        break;
+                    case 30:
+                        cardList.add(Card.S6);
+                        break;
+                    case 31:
+                        cardList.add(Card.S7);
+                        break;
+                    case 32:
+                        cardList.add(Card.S8);
+                        break;
+                    case 33:
+                        cardList.add(Card.S9);
+                        break;
+                    case 34:
+                        cardList.add(Card.S10);
+                        break;
+                    case 35:
+                        cardList.add(Card.SJ);
+                        break;
+                    case 36:
+                        cardList.add(Card.SQ);
+                        break;
+                    case 37:
+                        cardList.add(Card.SK);
+                        break;
+                    case 38:
+                        cardList.add(Card.SA);
+                        break;
+                    case 39:
+                        cardList.add(Card.H2);
+                        break;
+                    case 40:
+                        cardList.add(Card.H3);
+                        break;
+                    case 41:
+                        cardList.add(Card.H4);
+                        break;
+                    case 42:
+                        cardList.add(Card.H5);
+                        break;
+                    case 43:
+                        cardList.add(Card.H6);
+                        break;
+                    case 44:
+                        cardList.add(Card.H7);
+                        break;
+                    case 45:
+                        cardList.add(Card.H8);
+                        break;
+                    case 46:
+                        cardList.add(Card.H9);
+                        break;
+                    case 47:
+                        cardList.add(Card.H10);
+                        break;
+                    case 48:
+                        cardList.add(Card.HJ);
+                        break;
+                    case 49:
+                        cardList.add(Card.HQ);
+                        break;
+                    case 50:
+                        cardList.add(Card.HK);
+                        break;
+                    case 51:
+                        cardList.add(Card.HA);
+                        break;
+                }
             }
             hand.setHand(cardList);
             hand.setMaxValue(Integer.parseInt(inMessage.readUTF()));
@@ -214,7 +375,168 @@ public class Client {
             size = Integer.parseInt(inMessage.readUTF());
             List<Card> cardList = new ArrayList<>(size);
             for (int j = 0; j < size; j++) {
-                cardList.add(Card.valueOf(inMessage.readUTF()));
+                int id = Integer.parseInt(inMessage.readUTF());
+                switch (id) {
+                    case -1:
+                        cardList.add(Card.E0);
+                        break;
+                    case 0:
+                        cardList.add(Card.C2);
+                        break;
+                    case 1:
+                        cardList.add(Card.C3);
+                        break;
+                    case 2:
+                        cardList.add(Card.C4);
+                        break;
+                    case 3:
+                        cardList.add(Card.C5);
+                        break;
+                    case 4:
+                        cardList.add(Card.C6);
+                        break;
+                    case 5:
+                        cardList.add(Card.C7);
+                        break;
+                    case 6:
+                        cardList.add(Card.C8);
+                        break;
+                    case 7:
+                        cardList.add(Card.C9);
+                        break;
+                    case 8:
+                        cardList.add(Card.C10);
+                        break;
+                    case 9:
+                        cardList.add(Card.CJ);
+                        break;
+                    case 10:
+                        cardList.add(Card.CQ);
+                        break;
+                    case 11:
+                        cardList.add(Card.CK);
+                        break;
+                    case 12:
+                        cardList.add(Card.CA);
+                        break;
+                    case 13:
+                        cardList.add(Card.D2);
+                        break;
+                    case 14:
+                        cardList.add(Card.D3);
+                        break;
+                    case 15:
+                        cardList.add(Card.D4);
+                        break;
+                    case 16:
+                        cardList.add(Card.D5);
+                        break;
+                    case 17:
+                        cardList.add(Card.D6);
+                        break;
+                    case 18:
+                        cardList.add(Card.D7);
+                        break;
+                    case 19:
+                        cardList.add(Card.D8);
+                        break;
+                    case 20:
+                        cardList.add(Card.D9);
+                        break;
+                    case 21:
+                        cardList.add(Card.D10);
+                        break;
+                    case 22:
+                        cardList.add(Card.DJ);
+                        break;
+                    case 23:
+                        cardList.add(Card.DQ);
+                        break;
+                    case 24:
+                        cardList.add(Card.DK);
+                        break;
+                    case 25:
+                        cardList.add(Card.DA);
+                        break;
+                    case 26:
+                        cardList.add(Card.S2);
+                        break;
+                    case 27:
+                        cardList.add(Card.S3);
+                        break;
+                    case 28:
+                        cardList.add(Card.S4);
+                        break;
+                    case 29:
+                        cardList.add(Card.S5);
+                        break;
+                    case 30:
+                        cardList.add(Card.S6);
+                        break;
+                    case 31:
+                        cardList.add(Card.S7);
+                        break;
+                    case 32:
+                        cardList.add(Card.S8);
+                        break;
+                    case 33:
+                        cardList.add(Card.S9);
+                        break;
+                    case 34:
+                        cardList.add(Card.S10);
+                        break;
+                    case 35:
+                        cardList.add(Card.SJ);
+                        break;
+                    case 36:
+                        cardList.add(Card.SQ);
+                        break;
+                    case 37:
+                        cardList.add(Card.SK);
+                        break;
+                    case 38:
+                        cardList.add(Card.SA);
+                        break;
+                    case 39:
+                        cardList.add(Card.H2);
+                        break;
+                    case 40:
+                        cardList.add(Card.H3);
+                        break;
+                    case 41:
+                        cardList.add(Card.H4);
+                        break;
+                    case 42:
+                        cardList.add(Card.H5);
+                        break;
+                    case 43:
+                        cardList.add(Card.H6);
+                        break;
+                    case 44:
+                        cardList.add(Card.H7);
+                        break;
+                    case 45:
+                        cardList.add(Card.H8);
+                        break;
+                    case 46:
+                        cardList.add(Card.H9);
+                        break;
+                    case 47:
+                        cardList.add(Card.H10);
+                        break;
+                    case 48:
+                        cardList.add(Card.HJ);
+                        break;
+                    case 49:
+                        cardList.add(Card.HQ);
+                        break;
+                    case 50:
+                        cardList.add(Card.HK);
+                        break;
+                    case 51:
+                        cardList.add(Card.HA);
+                        break;
+                }
             }
             deck.setDeck(cardList);
             testTable.setTableDeck(deck);
@@ -349,7 +671,7 @@ public class Client {
         private void sendHand(Hand hand) throws IOException {
             out.writeUTF(Integer.toString(hand.getHand().size()));
             for (int i = 0; i < hand.getHand().size(); i++) {
-                out.writeUTF(hand.getHand().get(i).getName());
+                out.writeUTF(Integer.toString(hand.getHand().get(i).getId()));
             }
             out.writeUTF(Integer.toString(hand.getMaxValue()));
             out.writeUTF(Integer.toString(hand.getMaxValue2()));
@@ -373,7 +695,7 @@ public class Client {
             Deck deck = table.getTableDeck();
             out.writeUTF(Integer.toString(deck.getDeck().size()));
             for (int i = 0; i < deck.getDeck().size(); i++) {
-                out.writeUTF(deck.getDeck().get(i).getName());
+                out.writeUTF(Integer.toString(deck.getDeck().get(i).getId()));
             }
 
             out.writeUTF(table.getWinner().getName());
