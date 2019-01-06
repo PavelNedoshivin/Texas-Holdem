@@ -672,6 +672,9 @@ public class Server {
                         LinkedList list = (LinkedList) pair.getValue();
                         table = tab;
                         list.add(name);
+                        Player p = new Player(name, 20000, table, false);
+                        table.addPlayer(p);
+                        table.setPositions();
                         break;
                     }
                     counter++;

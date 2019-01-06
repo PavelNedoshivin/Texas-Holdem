@@ -210,15 +210,15 @@ public class MainController implements Initializable {
 			}
 			LinkedList obj = client.getTableNumbers();
 			button1.setText("Table 1 (" + obj.get(0) + "/5)");
-			button1.setVisible(true);
+			button1.setVisible((int)obj.get(0) < 5);
 			button2.setText("Table 2 (" + obj.get(1) + "/5)");
-			button2.setVisible(true);
+			button2.setVisible((int)obj.get(1) < 5);
 			button3.setText("Table 3 (" + obj.get(2) + "/5)");
-			button3.setVisible(true);
+			button3.setVisible((int)obj.get(2) < 5);
 			button4.setText("Table 4 (" + obj.get(3) + "/5)");
-			button4.setVisible(true);
+			button4.setVisible((int)obj.get(3) < 5);
 			button5.setText("Table 5 (" + obj.get(4) + "/5)");
-			button5.setVisible(true);
+			button5.setVisible((int)obj.get(4) < 5);
 			logBox.setVisible(false);
 			regBox.setVisible(false);
 			authBox.setVisible(false);
@@ -594,9 +594,6 @@ public class MainController implements Initializable {
         while (table == null) {
             table = client.getTable();
         }
-        Player p = new Player(client.getName(), 20000, table, false);
-        table.addPlayer(p);
-        table.setPositions();
         updateThread = new UpdateThread(this);
         updateThread.start();
     }
