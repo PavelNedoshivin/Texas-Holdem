@@ -459,6 +459,13 @@ public class MainController implements Initializable {
 		betSlider.setDisable(action4);
 	}
 
+	public void viewActionButtons(boolean visible) {
+		actionButton0.setVisible(visible);
+		actionButton1.setVisible(visible);
+		actionButton2.setVisible(visible);
+		actionButton3.setVisible(visible);
+	}
+
 	/**
 	 * Updates action of first button (Deal / Next / Think).
 	 */
@@ -479,6 +486,11 @@ public class MainController implements Initializable {
 			actionButton0.setOnAction(event -> {
 				think();
 			});
+		}
+		if (table.getPlayerOnTurn().getName().equals(playerName)) {
+			viewActionButtons(true);
+		} else {
+			viewActionButtons(false);
 		}
 	}
 
@@ -605,21 +617,6 @@ public class MainController implements Initializable {
 		update();
 		betSlider.setMin(table.getBigBlind() * 2);
 		betSlider.setValue(table.getBigBlind() * 2);
-	}
-
-	/**
-	 * Adds players to the table. TODO: Create stage window where you can tweak bet, players etc.
-	 */
-	public void addPlayers(){
-		for (Integer i = 0; i < 5; i++) {
-			if (i == 0) {
-				// This should be player.
-				table.addPlayer(new Player("Player "+ i.toString(), 20000,	table, false));
-			} else {
-				// These should be CPUs, but for now, thinking will not be forced for easier debug.
-				table.addPlayer(new Player(("Player " + i.toString()), 20000, table, true));
-			}
-		}		
 	}
 
 	public void deal() {
