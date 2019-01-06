@@ -594,47 +594,53 @@ public class Server {
             deck.setDeck(cardList);
             testTable.setTableDeck(deck);
 
-            Player player = new Player(dataInputStream.readUTF(), Integer.parseInt(dataInputStream.readUTF()),
-                    testTable, false);
-            int id = Integer.parseInt(dataInputStream.readUTF());
-            switch (id) {
-                case 0:
-                    player.setStatus(PlayerStatus.PLAYER_NORMAL);
-                    break;
-                case 1:
-                    player.setStatus(PlayerStatus.PLAYER_CHECK);
-                    break;
-                case 2:
-                    player.setStatus(PlayerStatus.PLAYER_CALL);
-                    break;
-                case 3:
-                    player.setStatus(PlayerStatus.PLAYER_BET);
-                    break;
-                case 4:
-                    player.setStatus(PlayerStatus.PLAYER_RAISE);
-                    break;
-                case 5:
-                    player.setStatus(PlayerStatus.PLAYER_FOLD);
-                    break;
-                case 6:
-                    player.setStatus(PlayerStatus.PLAYER_ALLIN);
-                    break;
-                case 7:
-                    player.setStatus(PlayerStatus.PLAYER_WINNER);
-                    break;
-                case 8:
-                    player.setStatus(PlayerStatus.PLAYER_LOST);
-                    break;
-                case 9:
-                    player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
-                    break;
+            String str = dataInputStream.readUTF();
+            if (str.equals("NULL")) {
+                testTable.setWinner(null);
             }
-            player.setDealer(Boolean.parseBoolean(dataInputStream.readUTF()));
-            player.setCurrentBet(Integer.parseInt(dataInputStream.readUTF()));
-            player.setHand(buildHand());
-            player.setBestHand(buildHand());
-            player.setKicker(buildHand());
-            testTable.setWinner(player);
+            else {
+                Player player = new Player(str, Integer.parseInt(dataInputStream.readUTF()),
+                        testTable, false);
+                int id = Integer.parseInt(dataInputStream.readUTF());
+                switch (id) {
+                    case 0:
+                        player.setStatus(PlayerStatus.PLAYER_NORMAL);
+                        break;
+                    case 1:
+                        player.setStatus(PlayerStatus.PLAYER_CHECK);
+                        break;
+                    case 2:
+                        player.setStatus(PlayerStatus.PLAYER_CALL);
+                        break;
+                    case 3:
+                        player.setStatus(PlayerStatus.PLAYER_BET);
+                        break;
+                    case 4:
+                        player.setStatus(PlayerStatus.PLAYER_RAISE);
+                        break;
+                    case 5:
+                        player.setStatus(PlayerStatus.PLAYER_FOLD);
+                        break;
+                    case 6:
+                        player.setStatus(PlayerStatus.PLAYER_ALLIN);
+                        break;
+                    case 7:
+                        player.setStatus(PlayerStatus.PLAYER_WINNER);
+                        break;
+                    case 8:
+                        player.setStatus(PlayerStatus.PLAYER_LOST);
+                        break;
+                    case 9:
+                        player.setStatus(PlayerStatus.PLAYER_BUSTED_OUT);
+                        break;
+                }
+                player.setDealer(Boolean.parseBoolean(dataInputStream.readUTF()));
+                player.setCurrentBet(Integer.parseInt(dataInputStream.readUTF()));
+                player.setHand(buildHand());
+                player.setBestHand(buildHand());
+                player.setKicker(buildHand());
+                testTable.setWinner(player);
+            }
 
             testTable.setDealerPos(Integer.parseInt(dataInputStream.readUTF()));
             testTable.setTurnPos(Integer.parseInt(dataInputStream.readUTF()));
@@ -758,15 +764,18 @@ public class Server {
                 dataOutputStream.writeUTF(Integer.toString(deck.getDeck().get(i).getId()));
             }
 
-            dataOutputStream.writeUTF(table.getWinner().getName());
-            dataOutputStream.writeUTF(Integer.toString(table.getWinner().getBalance()));
-            dataOutputStream.writeUTF(Integer.toString(table.getWinner().getStatus().getId()));
-            dataOutputStream.writeUTF(Boolean.toString(table.getWinner().getDealer()));
-            dataOutputStream.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
-            sendHand(table.getWinner().getHand());
-            sendHand(table.getWinner().getBestHand());
-            sendHand(table.getWinner().getKicker());
-
+            if (table.getWinner() != null) {
+                dataOutputStream.writeUTF(table.getWinner().getName());
+                dataOutputStream.writeUTF(Integer.toString(table.getWinner().getBalance()));
+                dataOutputStream.writeUTF(Integer.toString(table.getWinner().getStatus().getId()));
+                dataOutputStream.writeUTF(Boolean.toString(table.getWinner().getDealer()));
+                dataOutputStream.writeUTF(Integer.toString(table.getWinner().getCurrentBet()));
+                sendHand(table.getWinner().getHand());
+                sendHand(table.getWinner().getBestHand());
+                sendHand(table.getWinner().getKicker());
+            } else {
+                dataOutputStream.writeUTF("NULL");
+            }
             dataOutputStream.writeUTF(Integer.toString(table.getDealerPos()));
             dataOutputStream.writeUTF(Integer.toString(table.getTurnPos()));
             dataOutputStream.writeUTF(Integer.toString(table.getBlindSmallPos()));
