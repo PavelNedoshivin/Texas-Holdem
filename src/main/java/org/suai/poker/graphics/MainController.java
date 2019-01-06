@@ -384,7 +384,7 @@ public class MainController implements Initializable {
 		GridPane paneTop = new GridPane();
 		for (Integer i = 0; i < table.getPlayerSize(); i++) {
 			paneTop.add(getCardFlowPane(table.getPlayerHand(i), table.getPlayer(i).isNotPlaying()
-				|| !(table.getPlayerOnTurn().getName().equals(playerName))), i, 1);
+				|| !(table.getPlayer(i).getName().equals(playerName))), i, 1);
 			Label info = newLabel(table.getPlayerName(i)
 					+ (table.getDealerPos() == i ? " (D)" : "")
 					+ (table.getTurnPos() == i ? " (T)" : "")
@@ -682,42 +682,6 @@ public class MainController implements Initializable {
 	public void think() {
 		table.getPlayerOnTurn().think();
 		update();
-	}
-
-	public void save() {
-		if (table != null) {
-			FileOutputStream file = null;
-			ObjectOutputStream object = null;
-			try {
-				file = new FileOutputStream("savefile.sav");
-				object = new ObjectOutputStream(file);
-				object.writeObject(table);
-			} catch (IOException e) {
-				MessageWindow.show("Error", "Attempt to save file failed.");
-			}
-		} else {
-			MessageWindow.show("Error", "Unable to save game, table is not loaded.");
-		}
-	}
-
-	public void load() {
-		FileInputStream file = null;
-		ObjectInputStream object = null;
-		Table tableLoaded = null;
-		try {
-			file = new FileInputStream("savefile.sav");
-			object = new ObjectInputStream(file);
-			tableLoaded = (Table) object.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		if (tableLoaded == null) {
-			MessageWindow.show("Error", "Attempt to load file failed.");
-		} else {
-			table = tableLoaded;
-			hboxBottom.setVisible(true);
-			update();
-		}
 	}
 
 	public void setupStage (Stage stage, Scene scene, String title){
