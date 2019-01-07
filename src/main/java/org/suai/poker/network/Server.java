@@ -44,7 +44,6 @@ public class Server {
             dataInputStream = new DataInputStream(client.getInputStream());
             dataOutputStream = new DataOutputStream(client.getOutputStream());
             out = new ServerOutputThread(client);
-            userList.put(name, out);
             table = null;
             chosen = -1;
             start();
@@ -678,6 +677,7 @@ public class Server {
             try {
                 authentificate();
                 System.out.println(name + " has joined");
+                userList.put(name, out);
                 DataOutputStream outMessage = new DataOutputStream(client.getOutputStream());
                 for (Object o: tableList.entrySet()) {
                     Map.Entry pair = (Map.Entry)o;
