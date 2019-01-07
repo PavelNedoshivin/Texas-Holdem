@@ -568,6 +568,7 @@ public class MainController implements Initializable {
 				hasChanged = mc.table.equals(o);
 			}
 			mc.table = o;
+			mc.update();
 		}
 	}
 

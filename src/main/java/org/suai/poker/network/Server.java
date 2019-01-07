@@ -669,6 +669,7 @@ public class Server {
             testTable.setCurrentTurn(Integer.parseInt(dataInputStream.readUTF()));
             if (!(testTable.equals(table))) {
                 table = testTable;
+                sendTable();
             }
         }
 
@@ -702,6 +703,7 @@ public class Server {
                 }
                 System.out.println(name + " has chosen Table" + (chosen + 1));
                 out.setTable(table);
+                sendTable();
                 boolean first = true;
                 while (!server.isClosed()) {
                     buildTable();
@@ -709,7 +711,6 @@ public class Server {
                         System.out.println("Server got table!");
                         first = false;
                     }
-                    sendTable();
                 }
             } catch (IOException e) {
                 System.out.println("Communication with " + name + " terminated!");
