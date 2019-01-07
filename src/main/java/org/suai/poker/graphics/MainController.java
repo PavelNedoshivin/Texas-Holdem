@@ -580,14 +580,14 @@ public class MainController implements Initializable {
 	    public UpdateThread(MainController o) {
 	        mc = o;
 	        sent = true;
+	        ReceiveThread rt = new ReceiveThread(mc);
+			rt.start();
         }
         public void sendTable() {
 	    	sent = false;
 		}
 	    @Override
         public void run() {
-	    	ReceiveThread rt = new ReceiveThread(mc);
-	    	rt.start();
 	        while (true) {
 				while (sent) {
 					;
