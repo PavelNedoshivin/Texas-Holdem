@@ -561,14 +561,16 @@ public class MainController implements Initializable {
 		}
 		@Override
 		public void run() {
-			boolean hasChanged = false;
-			Table o = null;
-			while (!hasChanged) {
-				o = mc.client.getTable();
-				hasChanged = mc.table.equals(o);
+			while (true) {
+				boolean hasChanged = false;
+				Table o = null;
+				while (!hasChanged) {
+					o = mc.client.getTable();
+					hasChanged = mc.table.equals(o);
+				}
+				mc.table = o;
+				mc.update();
 			}
-			mc.table = o;
-			mc.update();
 		}
 	}
 
