@@ -566,7 +566,7 @@ public class MainController implements Initializable {
 				Table o = null;
 				while (!hasChanged) {
 					o = mc.client.getTable();
-					hasChanged = mc.table.equals(o);
+					hasChanged = !(mc.table.equals(o));
 				}
 				mc.table = o;
 				mc.updateTopPane();
