@@ -569,7 +569,15 @@ public class MainController implements Initializable {
 					hasChanged = mc.table.equals(o);
 				}
 				mc.table = o;
-				mc.update();
+				mc.updateTopPane();
+				mc.updateCenterPane();
+				mc.updateBottomPane();
+				mc.updatePlayerDetails();
+				mc.updateButtonState();
+				mc.updateAction0();
+				mc.updateAction1();
+				mc.updateAction2();
+				mc.updateAction3();
 			}
 		}
 	}
@@ -621,6 +629,15 @@ public class MainController implements Initializable {
         while (table == null) {
             table = client.getTable();
         }
+		updateTopPane();
+		updateCenterPane();
+		updateBottomPane();
+		updatePlayerDetails();
+		updateButtonState();
+		updateAction0();
+		updateAction1();
+		updateAction2();
+		updateAction3();
         updateThread = new UpdateThread(this);
         updateThread.start();
     }
