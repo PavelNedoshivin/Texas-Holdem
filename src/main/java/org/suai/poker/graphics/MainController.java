@@ -629,15 +629,6 @@ public class MainController implements Initializable {
         while (table == null) {
             table = client.getTable();
         }
-		updateTopPane();
-		updateCenterPane();
-		updateBottomPane();
-		updatePlayerDetails();
-		updateButtonState();
-		updateAction0();
-		updateAction1();
-		updateAction2();
-		updateAction3();
         updateThread = new UpdateThread(this);
         updateThread.start();
     }
