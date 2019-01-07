@@ -385,13 +385,16 @@ public class MainController implements Initializable {
 		for (Integer i = 0; i < table.getPlayerSize(); i++) {
 			paneTop.add(getCardFlowPane(table.getPlayerHand(i), table.getPlayer(i).isNotPlaying()
 				|| !(table.getPlayer(i).getName().equals(playerName))), i, 1);
-			Label info = newLabel(table.getPlayerName(i)
+			String inform = table.getPlayerName(i)
 					+ (table.getDealerPos() == i ? " (D)" : "")
 					+ (table.getTurnPos() == i ? " (T)" : "")
 					+ " - " + "$"
-					+ (table.getPlayerBalance(i) - table.getPlayerList().get(i).getCurrentBet()) + "\n"
-					+ (table.getPlayer(i).isBustedOut() ? "" : (table.getPlayer(i).getBestHand().getId()))
-					+ (table.getPlayer(i).getStatus() == PlayerStatus.PLAYER_NORMAL ? "" : " ("+ table.getPlayer(i).getStatus()+")"));
+					+ (table.getPlayerBalance(i) - table.getPlayerList().get(i).getCurrentBet()) + "\n";
+			if (table.getPlayer(i).getName().equals(playerName)) {
+				inform += (table.getPlayer(i).isBustedOut() ? "" : (table.getPlayer(i).getBestHand().getId()))
+						+ (table.getPlayer(i).getStatus() == PlayerStatus.PLAYER_NORMAL ? "" : " ("+ table.getPlayer(i).getStatus()+")");
+			}
+			Label info = newLabel(inform);
 			info.setMaxWidth(Integer.MAX_VALUE);
 			info.setAlignment(Pos.CENTER);
 			info.setTextAlignment(TextAlignment.CENTER);
