@@ -50,14 +50,35 @@ public class Server {
             start();
         }
         synchronized void sendTable() {
+            int num = 0;
+            LinkedList list = new LinkedList();
+            for (Object o: tableList.entrySet()) {
+                Map.Entry pair = (Map.Entry)o;
+                if (num == chosen) {
+                    list = (LinkedList)pair.getValue();
+                    break;
+                }
+                num++;
+            }
             for (Object o: userList.entrySet()) {
                 Map.Entry pair = (Map.Entry)o;
                 String name = (String)pair.getKey();
                 if (name.equals(this.name)) {
                     continue;
                 }
-                ServerOutputThread user = (ServerOutputThread)pair.getValue();
-                user.setTable(table);
+                boolean flag = false;
+                ListIterator it = list.listIterator();
+                while (it.hasNext()) {
+                    String playerName = (String)it.next();
+                    if (name.equals(playerName)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    ServerOutputThread user = (ServerOutputThread)pair.getValue();
+                    user.setTable(table);
+                }
             }
         }
         public void authentificate() throws IOException {
