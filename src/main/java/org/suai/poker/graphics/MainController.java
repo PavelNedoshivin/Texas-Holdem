@@ -554,6 +554,23 @@ public class MainController implements Initializable {
 
 	}
 
+	private static class ReceiveThread extends Thread {
+		private MainController mc;
+		public ReceiveThread(MainController o) {
+			mc = o;
+		}
+		@Override
+		public void run() {
+			boolean hasChanged = false;
+			Table o = null;
+			while (!hasChanged) {
+				o = mc.client.getTable();
+				hasChanged = mc.table.equals(o);
+			}
+			mc.table = o;
+		}
+	}
+
 	private static class UpdateThread extends Thread {
 	    private MainController mc;
 	    private boolean sent;
@@ -566,19 +583,14 @@ public class MainController implements Initializable {
 		}
 	    @Override
         public void run() {
+	    	ReceiveThread rt = new ReceiveThread(mc);
+	    	rt.start();
 	        while (true) {
 				while (sent) {
 					;
 				}
 				mc.client.setTable(mc.table);
 				sent = true;
-				boolean hasChanged = false;
-				Table o = null;
-				while (!hasChanged) {
-					o = mc.client.getTable();
-					hasChanged = mc.table.equals(o);
-				}
-				mc.table = o;
             }
         }
     }
