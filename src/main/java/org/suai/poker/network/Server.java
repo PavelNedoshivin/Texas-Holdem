@@ -711,6 +711,7 @@ public class Server {
                         System.out.println("Server got table!");
                         first = false;
                     }
+                    sendTable();
                 }
             } catch (IOException e) {
                 System.out.println("Communication with " + name + " terminated!");
@@ -725,6 +726,15 @@ public class Server {
                     counter++;
                 }
                 userList.remove(name);
+                List<Player> list = table.getPlayerList();
+                for (int i = 0; i < list.size(); i++) {
+                    if (name.equals(list.get(i).getName())) {
+                        list.remove(i);
+                        break;
+                    }
+                }
+                table.setPlayerList(list);
+                sendTable();
             }
         }
     }
