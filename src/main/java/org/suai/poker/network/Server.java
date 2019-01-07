@@ -701,7 +701,7 @@ public class Server {
                     counter++;
                 }
                 System.out.println(name + " has chosen Table" + (chosen + 1));
-                sendTable();
+                out.setTable(table);
                 boolean first = true;
                 while (!server.isClosed()) {
                     buildTable();
