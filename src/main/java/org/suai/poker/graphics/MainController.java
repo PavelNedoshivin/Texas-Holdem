@@ -639,7 +639,10 @@ public class MainController implements Initializable {
 	public void start() {
 		hboxBottom.setVisible(true);
 		betSlider.setDisable(false);
-		nextTurn();
+		if (table.getCurrentTurn() == 0)
+		{
+			nextTurn();
+		}
 		update();
 		betSlider.setMin(table.getBigBlind() * 2);
 		betSlider.setValue(table.getBigBlind() * 2);

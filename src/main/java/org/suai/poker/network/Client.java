@@ -630,6 +630,11 @@ public class Client {
                 outMessage.writeUTF(Integer.toString(chosen));
                 choseTable = true;
                 boolean first = true;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 buildTable();
                 while (!client.isClosed()) {
                     if (table != null) {
@@ -637,6 +642,11 @@ public class Client {
                             System.out.println("Client got table!");
                             first = false;
                         } else {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             buildTable();
                         }
                     }
