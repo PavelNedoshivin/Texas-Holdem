@@ -1,7 +1,5 @@
 package org.suai.poker.graphics;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,7 +18,7 @@ import javafx.stage.Stage;
 import org.suai.poker.model.*;
 import org.suai.poker.network.Client;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -116,7 +114,6 @@ public class MainController implements Initializable {
 	private Client client;
 	private int chosenTable;
 	private boolean radioEnter;
-	private boolean successfulCheck;
 	private static String playerName;
 	private static UpdateThread updateThread;
 
@@ -127,14 +124,11 @@ public class MainController implements Initializable {
 		betSlider.setMajorTickUnit(100);
 		betSlider.setMinorTickCount(0);
 		betSlider.setSnapToTicks(true);
-		betSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-				playerBet.setText("$" + Integer.toString(new_val.intValue()));
-				updateAction3();
-			}
+		betSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+			playerBet.setText("$" + new_val.intValue());
+			updateAction3();
 		});
 		chosenTable = -1;
-		successfulCheck = false;
 		button1.setVisible(false);
 		button2.setVisible(false);
 		button3.setVisible(false);
@@ -145,17 +139,10 @@ public class MainController implements Initializable {
 		isRegister.setSelected(true);
 		isLogin.setToggleGroup(group);
 		radioEnter = true;
-		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-				if (group.getSelectedToggle() != null) {
-					RadioButton button = (RadioButton)group.getSelectedToggle();
-					if (button.getText().equals("Login")) {
-						radioEnter = false;
-					} else {
-						radioEnter = true;
-					}
-				}
+		group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+			if (group.getSelectedToggle() != null) {
+				RadioButton button = (RadioButton)group.getSelectedToggle();
+				radioEnter = !button.getText().equals("Login");
 			}
 		});
 		try {
@@ -169,7 +156,6 @@ public class MainController implements Initializable {
 
 	@FXML
 	public void authentificate() {
-		boolean success = false;
 		boolean label = false;
 		if (radioEnter) {
 			String password = regPassword.getText();
@@ -222,7 +208,6 @@ public class MainController implements Initializable {
 			logBox.setVisible(false);
 			regBox.setVisible(false);
 			authBox.setVisible(false);
-			successfulCheck = true;
 		} else {
 			if (radioEnter && !label) {
 				authLabel.setText("Enter another name and/or login!");
