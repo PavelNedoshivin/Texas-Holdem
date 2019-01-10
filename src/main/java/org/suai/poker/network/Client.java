@@ -21,7 +21,6 @@ public class Client {
     private static LinkedList tableNumbers;
     private static ClientInputThread cit;
     private static ClientOutputThread cot;
-    private static boolean choseTable;
 
     public Client() throws IOException {
         client = new Socket("localhost", 8080);
@@ -31,7 +30,6 @@ public class Client {
         isSuccess = -1;
         changed = true;
         tableNumbers = new LinkedList();
-        choseTable = false;
     }
     public void setMode(boolean mode) {
         this.mode = mode;
@@ -628,13 +626,7 @@ public class Client {
                     ;
                 }
                 outMessage.writeUTF(Integer.toString(chosen));
-                choseTable = true;
                 boolean first = true;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 buildTable();
                 while (!client.isClosed()) {
                     if (table != null) {
@@ -642,11 +634,6 @@ public class Client {
                             System.out.println("Client got table!");
                             first = false;
                         } else {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                             buildTable();
                         }
                     }
