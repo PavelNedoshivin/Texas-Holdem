@@ -185,7 +185,7 @@ public class MainController implements Initializable {
 			}
 		}
 		try {
-			Thread.sleep(100);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -225,7 +225,6 @@ public class MainController implements Initializable {
 		chosenTable = 0;
 		client.setChosen(chosenTable);
 		invisibleButtons();
-		initTable();
 	}
 
 	@FXML
@@ -233,7 +232,6 @@ public class MainController implements Initializable {
 		chosenTable = 1;
 		client.setChosen(chosenTable);
 		invisibleButtons();
-		initTable();
 	}
 
 	@FXML
@@ -241,7 +239,6 @@ public class MainController implements Initializable {
 		chosenTable = 2;
 		client.setChosen(chosenTable);
 		invisibleButtons();
-		initTable();
 	}
 
 	@FXML
@@ -249,7 +246,6 @@ public class MainController implements Initializable {
 		chosenTable = 3;
 		client.setChosen(chosenTable);
 		invisibleButtons();
-		initTable();
 	}
 
 	@FXML
@@ -257,7 +253,6 @@ public class MainController implements Initializable {
 		chosenTable = 4;
 		client.setChosen(chosenTable);
 		invisibleButtons();
-		initTable();
 	}
 
 	public void invisibleButtons() {
@@ -552,7 +547,7 @@ public class MainController implements Initializable {
 		}
 		@Override
 		public void run() {
-			while (true) {
+			while (true){
 				boolean hasChanged = false;
 				Table o = null;
 				while (!hasChanged) {
@@ -562,8 +557,9 @@ public class MainController implements Initializable {
 				mc.table = o;
 				Platform.setImplicitExit(true);
 				if (isStarted) {
-					Platform.runLater(() -> {
-						synchronized (mc) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
 							mc.updateTopPane();
 							mc.updateCenterPane();
 							mc.updateBottomPane();
@@ -627,22 +623,28 @@ public class MainController implements Initializable {
         while (table == null) {
             table = client.getTable();
         }
-        updateThread = new UpdateThread(this);
-        updateThread.start();
+        if (table.getPlayerSize() > 1)
+		{
+			updateThread = new UpdateThread(this);
+			updateThread.start();
+		}
     }
 
 	public void start() {
-		if (table != null) {
-			isStarted = true;
-			hboxBottom.setVisible(true);
-			betSlider.setDisable(false);
-			if (table.getCurrentTurn() == 0)
-			{
-				nextTurn();
+		if (chosenTable >= 0) {
+			initTable();
+			if (table.getPlayerSize() > 1){
+				isStarted = true;
+				hboxBottom.setVisible(true);
+				betSlider.setDisable(false);
+				if (table.getCurrentTurn() == 0)
+				{
+					nextTurn();
+				}
+				update();
+				betSlider.setMin(table.getBigBlind() * 2);
+				betSlider.setValue(table.getBigBlind() * 2);
 			}
-			update();
-			betSlider.setMin(table.getBigBlind() * 2);
-			betSlider.setValue(table.getBigBlind() * 2);
 		}
 	}
 
