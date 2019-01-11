@@ -632,16 +632,18 @@ public class MainController implements Initializable {
     }
 
 	public void start() {
-		isStarted = true;
-		hboxBottom.setVisible(true);
-		betSlider.setDisable(false);
-		if (table.getCurrentTurn() == 0)
-		{
-			nextTurn();
+		if (table != null) {
+			isStarted = true;
+			hboxBottom.setVisible(true);
+			betSlider.setDisable(false);
+			if (table.getCurrentTurn() == 0)
+			{
+				nextTurn();
+			}
+			update();
+			betSlider.setMin(table.getBigBlind() * 2);
+			betSlider.setValue(table.getBigBlind() * 2);
 		}
-		update();
-		betSlider.setMin(table.getBigBlind() * 2);
-		betSlider.setValue(table.getBigBlind() * 2);
 	}
 
 	public void deal() {
