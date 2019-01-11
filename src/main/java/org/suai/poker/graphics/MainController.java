@@ -271,7 +271,7 @@ public class MainController implements Initializable {
 
 	public void statistics() throws IOException{
 		if (table != null && isStarted) {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/statistics.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("statistics.fxml"));
 			Parent root = (Parent) loader.load();
 			StatisticsController statControl = loader.getController();
 			statControl.setStatistics(table);
