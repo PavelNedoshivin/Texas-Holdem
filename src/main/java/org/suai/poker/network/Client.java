@@ -601,7 +601,7 @@ public class Client {
         public void run() {
             try {
                 while (login == null) {
-                    ;
+                    System.out.println();
                 }
                 while (isSuccess != 0) {
                     if (changed) {
@@ -623,7 +623,7 @@ public class Client {
                     tableNumbers.add(Integer.parseInt(inMessage.readUTF()));
                 }
                 while (chosen < 0) {
-                    ;
+                    System.out.println();
                 }
                 outMessage.writeUTF(Integer.toString(chosen));
                 boolean first = true;
