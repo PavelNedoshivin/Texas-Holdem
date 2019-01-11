@@ -613,6 +613,11 @@ public class Client {
                         }
                         changed = false;
                     }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     isSuccess = Integer.parseInt(inMessage.readUTF());
                     if (!mode && (isSuccess == 0)) {
                         name = inMessage.readUTF();
@@ -728,8 +733,10 @@ public class Client {
                     if (table != null) {
                         synchronized (table) {
                             if (!isSent) {
-                                send();
-                                isSent = true;
+                                if (table != null){
+                                    send();
+                                    isSent = true;
+                                }
                             }
                         }
                     }

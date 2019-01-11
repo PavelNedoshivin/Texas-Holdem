@@ -1,5 +1,6 @@
 package org.suai.poker.network;
 
+import javafx.util.Pair;
 import org.suai.poker.model.*;
 
 import java.io.*;
@@ -10,15 +11,13 @@ import java.util.*;
 public class Server {
     private static ServerSocket server;
     private static HashMap userList;
-    private static HashMap tableList;
+    private static LinkedList tableList;
     public static void main(String[] args) throws IOException {
         server = new ServerSocket(8080);
         userList = new HashMap();
-        tableList = new HashMap();
+        tableList = new LinkedList();
         for (int i = 0; i < 5; i++) {
-            LinkedList players = new LinkedList();
-            Table table = new Table();
-            tableList.put(table, players);
+            tableList.add(new Pair<>(new Table(), new LinkedList<>()));
         }
         System.out.println("Server has been started");
         while (true) {
@@ -51,8 +50,8 @@ public class Server {
         synchronized void sendTable() {
             int num = 0;
             LinkedList list = new LinkedList();
-            for (Object o: tableList.entrySet()) {
-                Map.Entry pair = (Map.Entry)o;
+            for (int i = 0; i < tableList.size(); i++) {
+                Pair pair = (Pair)tableList.get(i);
                 if (num == chosen) {
                     list = (LinkedList)pair.getValue();
                     break;
@@ -669,6 +668,10 @@ public class Server {
             testTable.setCurrentTurn(Integer.parseInt(dataInputStream.readUTF()));
             if (!(testTable.equals(table))) {
                 table = testTable;
+                Pair pair = (Pair)tableList.get(chosen);
+                LinkedList players = (LinkedList)pair.getValue();
+                tableList.remove(chosen);
+                tableList.add(chosen, new Pair<>(table, players));
                 sendTable();
             }
         }
@@ -680,23 +683,28 @@ public class Server {
                 System.out.println(name + " has joined");
                 userList.put(name, out);
                 DataOutputStream outMessage = new DataOutputStream(client.getOutputStream());
-                for (Object o: tableList.entrySet()) {
-                    Map.Entry pair = (Map.Entry)o;
-                    LinkedList list = (LinkedList)pair.getValue();
+                for (int i = 0; i < tableList.size(); i++) {
+                    Pair pair = (Pair)tableList.get(i);
+                    LinkedList list = (LinkedList) pair.getValue();
                     outMessage.writeUTF(Integer.toString(list.size()));
                 }
                 chosen = Integer.parseInt(dataInputStream.readUTF());
                 int counter = 0;
-                for (Object o: tableList.entrySet()) {
-                    Map.Entry pair = (Map.Entry)o;
+                for (int i = 0; i < tableList.size(); i++) {
+                    Pair pair = (Pair)tableList.get(i);
                     if (counter == chosen) {
                         Table tab = (Table) pair.getKey();
                         LinkedList list = (LinkedList) pair.getValue();
                         table = tab;
                         list.add(name);
                         Player p = new Player(name, 20000, table, false);
+                        if (table.getCurrentTurn() > 0) {
+                            p.setStatus(PlayerStatus.PLAYER_FOLD);
+                        }
                         table.addPlayer(p);
-                        table.setPositions();
+                        if (table.getCurrentTurn() == 0) {
+                            table.setPositions();
+                        }
                         break;
                     }
                     counter++;
@@ -713,28 +721,46 @@ public class Server {
                     }
                     sendTable();
                 }
-            } catch (IOException e) {
-                System.out.println("Communication with " + name + " terminated!");
-                int counter = 0;
-                for (Object o: tableList.entrySet()) {
-                    Map.Entry pair = (Map.Entry)o;
-                    if (counter == chosen) {
-                        LinkedList list = (LinkedList)pair.getValue();
-                        list.remove(name);
-                        break;
+            }
+            catch (IOException e) {
+                try {
+                    System.out.println("Communication with " + name + " terminated!");
+                    int counter = 0;
+                    userList.remove(name);
+                    for (int i = 0; i < tableList.size(); i++) {
+                        Pair pair = (Pair)tableList.get(i);
+                        if (counter == chosen) {
+                            LinkedList list = (LinkedList)pair.getValue();
+                            list.remove(name);
+                            break;
+                        }
+                        counter++;
                     }
-                    counter++;
-                }
-                userList.remove(name);
-                List<Player> list = table.getPlayerList();
-                for (int i = 0; i < list.size(); i++) {
-                    if (name.equals(list.get(i).getName())) {
-                        list.remove(i);
-                        break;
+                    List<Player> list = table.getPlayerList();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (name.equals(list.get(i).getName())) {
+                            list.remove(i);
+                            break;
+                        }
                     }
+                    List balances = new ArrayList(list.size());
+                    List names = new ArrayList(list.size());
+                    for (int i = 0; i < list.size(); i++) {
+                        balances.add(list.get(i).getBalance());
+                        names.add(list.get(i).getName());
+                    }
+                    list.clear();
+                    for (int i = 0; i < balances.size(); i++) {
+                        list.add(new Player((String)names.get(i), (Integer)balances.get(i), table, false));
+                    }
+                    table = new Table();
+                    table.setPlayerList(list);
+                    table.setPositions();
+                    sendTable();
                 }
-                table.setPlayerList(list);
-                sendTable();
+                catch(Exception ignored) {
+                    ;
+                }
             }
         }
     }
@@ -822,7 +848,7 @@ public class Server {
             if (!sent) {
                 try {
                     send();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     System.out.println("Communication terminated!");
                     isRunning = false;
                 }

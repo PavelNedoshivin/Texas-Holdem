@@ -537,13 +537,8 @@ public class MainController implements Initializable {
 
 	private static class ReceiveThread extends Thread {
 		private MainController mc;
-		private boolean joined;
 		public ReceiveThread(MainController o) {
 			mc = o;
-		}
-
-		public void setJoined(boolean joined) {
-			this.joined = joined;
 		}
 
 		@Override
@@ -553,26 +548,28 @@ public class MainController implements Initializable {
 				Table o = null;
 				while (!hasChanged) {
 					o = mc.client.getTable();
-					hasChanged = !(mc.table.equals(o));
+					if (mc.table != null) {
+						hasChanged = !(mc.table.equals(o));
+					}
 				}
 				mc.table = o;
-				Platform.setImplicitExit(true);
-				if (isStarted) {
-					Platform.runLater(() -> {
-						mc.updateTopPane();
-						mc.updateCenterPane();
-						mc.updateBottomPane();
-						mc.updatePlayerDetails();
-						mc.updateButtonState();
-						mc.updateAction0();
-						mc.updateAction1();
-						mc.updateAction2();
-						mc.updateAction3();
-					});
-				}
-				if (joined && playerName.equals(mc.table.getPlayerOnTurn().getName())) {
-					mc.fold();
-					joined = false;
+				if (mc.table.getCurrentTurn() == 0) {
+					Platform.runLater(() -> mc.start());
+				} else {
+					Platform.setImplicitExit(true);
+					if (isStarted) {
+						Platform.runLater(() -> {
+							mc.updateTopPane();
+							mc.updateCenterPane();
+							mc.updateBottomPane();
+							mc.updatePlayerDetails();
+							mc.updateButtonState();
+							mc.updateAction0();
+							mc.updateAction1();
+							mc.updateAction2();
+							mc.updateAction3();
+						});
+					}
 				}
 			}
 		}
@@ -581,11 +578,10 @@ public class MainController implements Initializable {
 	private static class UpdateThread extends Thread {
 	    private MainController mc;
 	    private boolean sent;
-	    public UpdateThread(MainController o, boolean joined) {
+	    public UpdateThread(MainController o) {
 	        mc = o;
 	        sent = true;
 	        ReceiveThread rt = new ReceiveThread(mc);
-	        rt.setJoined(joined);
 			rt.start();
         }
         public void sendTable() {
@@ -626,9 +622,9 @@ public class MainController implements Initializable {
         while (table == null) {
             table = client.getTable();
         }
-        if (table.getPlayerSize() > 1)
+        if (table.getPlayerSize() > 1 && !isStarted)
 		{
-			updateThread = new UpdateThread(this, table.getCurrentTurn() > 1);
+			updateThread = new UpdateThread(this);
 			updateThread.start();
 		}
     }
@@ -640,8 +636,7 @@ public class MainController implements Initializable {
 				isStarted = true;
 				hboxBottom.setVisible(true);
 				betSlider.setDisable(false);
-				if (table.getCurrentTurn() == 0)
-				{
+				if (table.getCurrentTurn() == 0) {
 					nextTurn();
 				}
 				update();
