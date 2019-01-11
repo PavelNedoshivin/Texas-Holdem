@@ -1,5 +1,6 @@
 package org.suai.poker.graphics;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -544,6 +545,7 @@ public class MainController implements Initializable {
 
 	private static class ReceiveThread extends Thread {
 		private MainController mc;
+		private Table o;
 		public ReceiveThread(MainController o) {
 			mc = o;
 		}
@@ -551,21 +553,26 @@ public class MainController implements Initializable {
 		public void run() {
 			while (true) {
 				boolean hasChanged = false;
-				Table o = null;
+				o = null;
 				while (!hasChanged) {
 					o = mc.client.getTable();
 					hasChanged = !(mc.table.equals(o));
 				}
-				mc.table = o;
-				mc.updateTopPane();
-				mc.updateCenterPane();
-				mc.updateBottomPane();
-				mc.updatePlayerDetails();
-				mc.updateButtonState();
-				mc.updateAction0();
-				mc.updateAction1();
-				mc.updateAction2();
-				mc.updateAction3();
+				Platform.setImplicitExit(true);
+				Platform.runLater(() -> {
+					synchronized (mc) {
+						mc.table = o;
+						mc.updateTopPane();
+						mc.updateCenterPane();
+						mc.updateBottomPane();
+						mc.updatePlayerDetails();
+						mc.updateButtonState();
+						mc.updateAction0();
+						mc.updateAction1();
+						mc.updateAction2();
+						mc.updateAction3();
+					}
+				});
 			}
 		}
 	}
