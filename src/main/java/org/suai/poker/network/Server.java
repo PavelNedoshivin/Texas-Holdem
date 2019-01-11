@@ -695,6 +695,9 @@ public class Server {
                         table = tab;
                         list.add(name);
                         Player p = new Player(name, 20000, table, false);
+                        if (table.getCurrentTurn() != 0) {
+                            p.setStatus(PlayerStatus.PLAYER_FOLD);
+                        }
                         table.addPlayer(p);
                         table.setPositions();
                         break;

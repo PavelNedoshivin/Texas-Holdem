@@ -117,6 +117,7 @@ public class MainController implements Initializable {
 	private boolean radioEnter;
 	private static String playerName;
 	private static UpdateThread updateThread;
+	private static boolean isStarted;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -130,6 +131,7 @@ public class MainController implements Initializable {
 			updateAction3();
 		});
 		chosenTable = -1;
+		isStarted = false;
 		button1.setVisible(false);
 		button2.setVisible(false);
 		button3.setVisible(false);
@@ -278,7 +280,7 @@ public class MainController implements Initializable {
 	}
 
 	public void statistics() throws IOException{
-		if (table != null) {
+		if (table != null && isStarted) {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/statistics.fxml"));
 			Parent root = (Parent) loader.load();
 			StatisticsController statControl = loader.getController();
@@ -545,7 +547,6 @@ public class MainController implements Initializable {
 
 	private static class ReceiveThread extends Thread {
 		private MainController mc;
-		private Table o;
 		public ReceiveThread(MainController o) {
 			mc = o;
 		}
@@ -553,26 +554,28 @@ public class MainController implements Initializable {
 		public void run() {
 			while (true) {
 				boolean hasChanged = false;
-				o = null;
+				Table o = null;
 				while (!hasChanged) {
 					o = mc.client.getTable();
 					hasChanged = !(mc.table.equals(o));
 				}
+				mc.table = o;
 				Platform.setImplicitExit(true);
-				Platform.runLater(() -> {
-					synchronized (mc) {
-						mc.table = o;
-						mc.updateTopPane();
-						mc.updateCenterPane();
-						mc.updateBottomPane();
-						mc.updatePlayerDetails();
-						mc.updateButtonState();
-						mc.updateAction0();
-						mc.updateAction1();
-						mc.updateAction2();
-						mc.updateAction3();
-					}
-				});
+				if (isStarted) {
+					Platform.runLater(() -> {
+						synchronized (mc) {
+							mc.updateTopPane();
+							mc.updateCenterPane();
+							mc.updateBottomPane();
+							mc.updatePlayerDetails();
+							mc.updateButtonState();
+							mc.updateAction0();
+							mc.updateAction1();
+							mc.updateAction2();
+							mc.updateAction3();
+						}
+					});
+				}
 			}
 		}
 	}
@@ -629,6 +632,7 @@ public class MainController implements Initializable {
     }
 
 	public void start() {
+		isStarted = true;
 		hboxBottom.setVisible(true);
 		betSlider.setDisable(false);
 		if (table.getCurrentTurn() == 0)
