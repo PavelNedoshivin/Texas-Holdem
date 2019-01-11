@@ -184,11 +184,6 @@ public class MainController implements Initializable {
 				client.setRequest(login, password);
 			}
 		}
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		int val = client.getSuccess();
 		while (val < 0) {
 			val = client.getSuccess();
@@ -198,16 +193,16 @@ public class MainController implements Initializable {
 				playerName = client.getName();
 			}
 			LinkedList obj = client.getTableNumbers();
-			button1.setText("Table 1 (" + obj.get(0) + "/5)");
-			button1.setVisible((int)obj.get(0) < 5);
-			button2.setText("Table 2 (" + obj.get(1) + "/5)");
-			button2.setVisible((int)obj.get(1) < 5);
-			button3.setText("Table 3 (" + obj.get(2) + "/5)");
-			button3.setVisible((int)obj.get(2) < 5);
-			button4.setText("Table 4 (" + obj.get(3) + "/5)");
-			button4.setVisible((int)obj.get(3) < 5);
-			button5.setText("Table 5 (" + obj.get(4) + "/5)");
-			button5.setVisible((int)obj.get(4) < 5);
+			button1.setText("Table 1 (" + obj.get(0) + "/4)");
+			button1.setVisible((int)obj.get(0) < 4);
+			button2.setText("Table 2 (" + obj.get(1) + "/4)");
+			button2.setVisible((int)obj.get(1) < 4);
+			button3.setText("Table 3 (" + obj.get(2) + "/4)");
+			button3.setVisible((int)obj.get(2) < 4);
+			button4.setText("Table 4 (" + obj.get(3) + "/4)");
+			button4.setVisible((int)obj.get(3) < 4);
+			button5.setText("Table 5 (" + obj.get(4) + "/4)");
+			button5.setVisible((int)obj.get(4) < 4);
 			logBox.setVisible(false);
 			regBox.setVisible(false);
 			authBox.setVisible(false);
@@ -542,9 +537,15 @@ public class MainController implements Initializable {
 
 	private static class ReceiveThread extends Thread {
 		private MainController mc;
+		private boolean joined;
 		public ReceiveThread(MainController o) {
 			mc = o;
 		}
+
+		public void setJoined(boolean joined) {
+			this.joined = joined;
+		}
+
 		@Override
 		public void run() {
 			while (true){
@@ -557,20 +558,21 @@ public class MainController implements Initializable {
 				mc.table = o;
 				Platform.setImplicitExit(true);
 				if (isStarted) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							mc.updateTopPane();
-							mc.updateCenterPane();
-							mc.updateBottomPane();
-							mc.updatePlayerDetails();
-							mc.updateButtonState();
-							mc.updateAction0();
-							mc.updateAction1();
-							mc.updateAction2();
-							mc.updateAction3();
-						}
+					Platform.runLater(() -> {
+						mc.updateTopPane();
+						mc.updateCenterPane();
+						mc.updateBottomPane();
+						mc.updatePlayerDetails();
+						mc.updateButtonState();
+						mc.updateAction0();
+						mc.updateAction1();
+						mc.updateAction2();
+						mc.updateAction3();
 					});
+				}
+				if (joined && playerName.equals(mc.table.getPlayerOnTurn().getName())) {
+					mc.fold();
+					joined = false;
 				}
 			}
 		}
@@ -579,10 +581,11 @@ public class MainController implements Initializable {
 	private static class UpdateThread extends Thread {
 	    private MainController mc;
 	    private boolean sent;
-	    public UpdateThread(MainController o) {
+	    public UpdateThread(MainController o, boolean joined) {
 	        mc = o;
 	        sent = true;
 	        ReceiveThread rt = new ReceiveThread(mc);
+	        rt.setJoined(joined);
 			rt.start();
         }
         public void sendTable() {
@@ -625,7 +628,7 @@ public class MainController implements Initializable {
         }
         if (table.getPlayerSize() > 1)
 		{
-			updateThread = new UpdateThread(this);
+			updateThread = new UpdateThread(this, table.getCurrentTurn() > 1);
 			updateThread.start();
 		}
     }

@@ -59,7 +59,7 @@ public class Table implements Serializable {
 		Table obj = (Table)o;
 		if (playerList.equals(obj.playerList) && tableHand.equals(obj.tableHand) && pot.equals(obj.pot) &&
 				tableDeck.equals(obj.tableDeck) && currentBet.equals(obj.currentBet) && smallBlind.equals(obj.smallBlind) &&
-				dealerPos.equals(obj.dealerPos) && turnPos.equals(obj.dealerPos) &&
+				dealerPos.equals(obj.dealerPos) && turnPos.equals(obj.turnPos) &&
 				blindSmallPos.equals(obj.blindSmallPos) && blindBigPos.equals(obj.blindBigPos) &&
 				currentTurn.equals(obj.currentTurn)) {
 			return true;
