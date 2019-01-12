@@ -1,6 +1,8 @@
 package org.suai.poker.graphics;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -118,6 +120,11 @@ public class MainController implements Initializable {
 	private static String playerName;
 	private static UpdateThread updateThread;
 	private static boolean isStarted;
+	private static int port;
+	private static String ip;
+
+	private TextField portField;
+	private TextField ipField;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -130,6 +137,7 @@ public class MainController implements Initializable {
 			playerBet.setText("$" + new_val.intValue());
 			updateAction3();
 		});
+		setPort();
 		chosenTable = -1;
 		isStarted = false;
 		button1.setVisible(false);
@@ -148,69 +156,102 @@ public class MainController implements Initializable {
 				radioEnter = !button.getText().equals("Login");
 			}
 		});
-		try {
-			client = new Client();
-			client.start();
-			table = null;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	}
+
+	public void setPort() {
+		port = -1;
+		ip = null;
+		Stage network = new Stage();
+		network.setAlwaysOnTop(true);
+		BorderPane border = new BorderPane();
+		VBox box = new VBox();
+		box.getChildren().add(new Label("Enter ip:"));
+		ipField = new TextField();
+		box.getChildren().add(ipField);
+		box.getChildren().add(new Label("Enter port:"));
+		portField = new TextField();
+		box.getChildren().add(portField);
+		Button setButton = new Button("Set");
+		box.getChildren().add(setButton);
+		box.setAlignment(Pos.CENTER);
+		border.setCenter(box);
+		setupStage(network, new Scene(border), "Network");
+		setButton.setOnAction(event -> {
+			try{
+				ip = ipField.getText();
+				port = Integer.parseInt(portField.getText());
+				if (port > 0 && ip != null) {
+					network.close();
+					try {
+						client = new Client(ip, port);
+						client.start();
+						table = null;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (Exception e) {
+				box.getChildren().add(new Label("Port must be digital!"));
+			}
+		});
 	}
 
 	@FXML
 	public void authentificate() {
-		boolean label = false;
-		if (radioEnter) {
-			String password = regPassword.getText();
-			String check = regCheck.getText();
-			if (!(password.equals(check)) && (password != null)) {
-				authLabel.setText("Wrong register: wrong check!");
-				label = true;
+		if (port > 0 && ip != null) {
+			boolean label = false;
+			if (radioEnter) {
+				String password = regPassword.getText();
+				String check = regCheck.getText();
+				if (!(password.equals(check)) && (password != null)) {
+					authLabel.setText("Wrong register: wrong check!");
+					label = true;
+				} else {
+					String login = regLogin.getText();
+					String name = regName.getText();
+					if ((name != null) && (login != null)) {
+						client.setMode(true);
+						client.setRequest(login, password);
+						client.setName(name);
+						playerName = name;
+					}
+				}
 			} else {
-				String login = regLogin.getText();
-				String name = regName.getText();
-				if ((name != null) && (login != null)) {
-					client.setMode(true);
+				String login = logLogin.getText();
+				String password = logPassword.getText();
+				if ((login != null) && (password != null)) {
+					client.setMode(false);
 					client.setRequest(login, password);
-					client.setName(name);
-					playerName = name;
 				}
 			}
-		} else {
-			String login = logLogin.getText();
-			String password = logPassword.getText();
-			if ((login != null) && (password != null)) {
-				client.setMode(false);
-				client.setRequest(login, password);
+			int val = client.getSuccess();
+			while (val < 0) {
+				val = client.getSuccess();
 			}
-		}
-		int val = client.getSuccess();
-		while (val < 0) {
-			val = client.getSuccess();
-		}
-		if (val == 0) {
-			if (!radioEnter) {
-				playerName = client.getName();
-			}
-			LinkedList obj = client.getTableNumbers();
-			button1.setText("Table 1 (" + obj.get(0) + "/4)");
-			button1.setVisible((int)obj.get(0) < 4);
-			button2.setText("Table 2 (" + obj.get(1) + "/4)");
-			button2.setVisible((int)obj.get(1) < 4);
-			button3.setText("Table 3 (" + obj.get(2) + "/4)");
-			button3.setVisible((int)obj.get(2) < 4);
-			button4.setText("Table 4 (" + obj.get(3) + "/4)");
-			button4.setVisible((int)obj.get(3) < 4);
-			button5.setText("Table 5 (" + obj.get(4) + "/4)");
-			button5.setVisible((int)obj.get(4) < 4);
-			logBox.setVisible(false);
-			regBox.setVisible(false);
-			authBox.setVisible(false);
-		} else {
-			if (radioEnter && !label) {
-				authLabel.setText("Enter another name and/or login!");
+			if (val == 0) {
+				if (!radioEnter) {
+					playerName = client.getName();
+				}
+				LinkedList obj = client.getTableNumbers();
+				button1.setText("Table 1 (" + obj.get(0) + "/4)");
+				button1.setVisible((int)obj.get(0) < 4);
+				button2.setText("Table 2 (" + obj.get(1) + "/4)");
+				button2.setVisible((int)obj.get(1) < 4);
+				button3.setText("Table 3 (" + obj.get(2) + "/4)");
+				button3.setVisible((int)obj.get(2) < 4);
+				button4.setText("Table 4 (" + obj.get(3) + "/4)");
+				button4.setVisible((int)obj.get(3) < 4);
+				button5.setText("Table 5 (" + obj.get(4) + "/4)");
+				button5.setVisible((int)obj.get(4) < 4);
+				logBox.setVisible(false);
+				regBox.setVisible(false);
+				authBox.setVisible(false);
 			} else {
-				authLabel.setText("Wrong login or password!");
+				if (radioEnter && !label) {
+					authLabel.setText("Enter another name and/or login!");
+				} else {
+					authLabel.setText("Wrong login or password!");
+				}
 			}
 		}
 	}
@@ -257,6 +298,7 @@ public class MainController implements Initializable {
 		button4.setVisible(false);
 		button5.setVisible(false);
 		vbox.setVisible(false);
+		start();
 	}
 
 	public void loadImages(){
@@ -402,14 +444,14 @@ public class MainController implements Initializable {
 		border.setCenter(box);
 	}
 
-	public void updateBottomPane() {
+	/*public void updateBottomPane() {
 		if (table.getPlayerOnTurn().getName().equals(playerName))
 		{
 			FlowPane paneBottom = getCardFlowPane(table.getPlayerOnTurn().getHand(), false);
 			paneBottom.setAlignment(Pos.BOTTOM_CENTER);
 			border.setBottom(paneBottom);
 		}
-	}
+	}*/
 
 	public void updatePlayerDetails() {
 		String potDetails = "";
@@ -522,7 +564,7 @@ public class MainController implements Initializable {
 
 		updateCenterPane();
 
-		updateBottomPane();
+		//updateBottomPane();
 
 		updatePlayerDetails();
 
@@ -561,7 +603,7 @@ public class MainController implements Initializable {
 						Platform.runLater(() -> {
 							mc.updateTopPane();
 							mc.updateCenterPane();
-							mc.updateBottomPane();
+							//mc.updateBottomPane();
 							mc.updatePlayerDetails();
 							mc.updateButtonState();
 							mc.updateAction0();

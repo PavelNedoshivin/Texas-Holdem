@@ -22,8 +22,8 @@ public class Client {
     private static ClientInputThread cit;
     private static ClientOutputThread cot;
 
-    public Client() throws IOException {
-        client = new Socket("localhost", 8080);
+    public Client(String ip, int port) throws IOException {
+        client = new Socket(ip, port);
         table = null;
         chosen = -1;
         name = null;

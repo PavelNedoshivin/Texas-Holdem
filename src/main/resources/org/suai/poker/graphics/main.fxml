@@ -14,8 +14,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Game">
             <items>
-              <MenuItem fx:id="startMenuItem" mnemonicParsing="false" onAction="#start" text="New" />
-                  <MenuItem fx:id="statisticsMenuItem" mnemonicParsing="false" onAction="#statistics" text="Statistics" />
+               <MenuItem fx:id="statisticsMenuItem" mnemonicParsing="false" onAction="#statistics" text="Statistics" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
