@@ -698,8 +698,22 @@ public class Server {
                         table = tab;
                         list.add(name);
                         Player p = new Player(name, 20000, table, false);
-                        if (table.getCurrentTurn() > 0) {
-                            p.setStatus(PlayerStatus.PLAYER_FOLD);
+                        if (table.getCurrentTurn() == 1) {
+                            boolean flag = false;
+                            ListIterator it = table.getPlayerList().listIterator();
+                            while (it.hasNext()) {
+                                Player o = (Player)it.next();
+                                if (!o.getStatus().equals(PlayerStatus.PLAYER_NORMAL)) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag) {
+                                p.setStatus(PlayerStatus.PLAYER_FOLD);
+                            } else {
+                                p.getHand().draw(table.getTableDeck(), 2);
+                                table.checkBestHands();
+                            }
                         }
                         table.addPlayer(p);
                         if (table.getCurrentTurn() == 0) {

@@ -661,7 +661,7 @@ public class MainController implements Initializable {
 
 	public void initTable() {
         table = null;
-        while (table == null) {
+        while (table == null || table.getPlayerSize() < 2) {
             table = client.getTable();
         }
         if (table.getPlayerSize() > 1 && !isStarted)
